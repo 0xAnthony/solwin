@@ -11,6 +11,7 @@ import pkg from '../../../package.json';
 
 // Store
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
+import {SolendActionCore, fetchPoolByAddress} from "@solendprotocol/solend-sdk";
 
 export const HomeView: FC = ({ }) => {
   const wallet = useWallet();
@@ -19,15 +20,23 @@ export const HomeView: FC = ({ }) => {
   const balance = useUserSOLBalanceStore((s) => s.balance)
   const { getUserSOLBalance } = useUserSOLBalanceStore()
 
+  const borrowUSDC = () => {
+
+    await SolendActionCore.buildBorrowTxns()
+  }
+
   useEffect(() => {
+
     if (wallet.publicKey) {
       console.log(wallet.publicKey.toBase58())
       getUserSOLBalance(wallet.publicKey, connection)
+      fetchPoolByAddress("GvjoVKNjBvQcFaSKUW1gTE7DxhSpjHbE69umVR5nPuQp", connection).then((x) => {
+        console.log("POOL", x);
+      })
     }
   }, [wallet.publicKey, connection, getUserSOLBalance])
 
   return (
-
     <div className="md:hero mx-auto p-4">
       <div className="md:hero-content flex flex-col">
         <div className='mt-6'>
@@ -64,6 +73,7 @@ export const HomeView: FC = ({ }) => {
           </h4>
         </div>
       </div>
+      <button onClick={borrowUSDC}>BORROW USDC</button>
     </div>
   );
 };
