@@ -11,7 +11,7 @@ import pkg from '../../../package.json';
 
 // Store
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
-import {SolendActionCore, fetchPoolByAddress} from "@solendprotocol/solend-sdk";
+import {fetchPoolByAddress} from "@solendprotocol/solend-sdk";
 
 export const HomeView: FC = ({ }) => {
   const wallet = useWallet();
@@ -25,15 +25,18 @@ export const HomeView: FC = ({ }) => {
   }
 
   useEffect(() => {
-
     if (wallet.publicKey) {
-      console.log(wallet.publicKey.toBase58())
-      getUserSOLBalance(wallet.publicKey, connection)
-      fetchPoolByAddress("GvjoVKNjBvQcFaSKUW1gTE7DxhSpjHbE69umVR5nPuQp", connection).then((x) => {
-        console.log("POOL", x);
-      })
+      const fetchPoolData = async () => {
+        console.log(wallet.publicKey.toBase58());
+        await getUserSOLBalance(wallet.publicKey, connection);
+        let val = await fetchPoolByAddress("GvjoVKNjBvQcFaSKUW1gTE7DxhSpjHbE69umVR5nPuQp", connection);
+        console.log("POOL");
+        console.log(val);
+      };
+
+      fetchPoolData();
     }
-  }, [wallet.publicKey, connection, getUserSOLBalance])
+  }, [wallet.publicKey, connection, getUserSOLBalance]);
 
   return (
     <div className="md:hero mx-auto p-4">
