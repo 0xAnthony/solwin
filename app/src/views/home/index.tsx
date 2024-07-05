@@ -20,9 +20,8 @@ export const HomeView: FC = ({ }) => {
   const balance = useUserSOLBalanceStore((s) => s.balance)
   const { getUserSOLBalance } = useUserSOLBalanceStore()
 
-  const borrowUSDC = () => {
-
-    await SolendActionCore.buildBorrowTxns()
+  const borrowUSDC = async () => {
+    // await SolendActionCore.buildBorrowTxns()
   }
 
   useEffect(() => {
