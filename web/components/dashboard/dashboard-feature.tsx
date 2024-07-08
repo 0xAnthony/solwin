@@ -2,6 +2,7 @@
 
 import { AppHero } from '../ui/ui-layout';
 import {SwapWidget} from "@/components/swap/SwapWidget";
+import {LotteryCard} from "@/components/lottery/LotteryCard";
 
 const links: { label: string; href: string }[] = [
   { label: 'Solana Docs', href: 'https://docs.solana.com/' },
@@ -18,7 +19,10 @@ export default function DashboardFeature() {
   return (
     <div>
       <AppHero title="SolWin" subtitle="The only lottery where you can't loose !" />
-      <SwapWidget/>
+      <div className="flex grow gap-8">
+        <SwapWidget/>
+        <LotteryCard/>
+      </div>
     </div>
   );
 }

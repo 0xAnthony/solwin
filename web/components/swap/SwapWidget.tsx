@@ -67,8 +67,8 @@ export const SwapWidget = () => {
                     <a role="tab" className={`tab ${action === "withdraw" && 'tab-active'}`} onClick={setActionWithdraw}>Withdraw</a>
                 </div>
                     <label className="input input-bordered flex items-center">
-                        <input type="text" className="grow" placeholder="Amount" value={inputValue}/>
-                        <button className="btn btn-primary btn-sm" onClick={setMax}>MAX</button>
+                        <input type="text" className="grow" placeholder="Amount" value={inputValue} onChange={() => {}}/>
+                        <button className="btn btn-secondary btn-sm" onClick={setMax}>MAX</button>
                     </label>
                 <div className="flex flex-col">
                     <div className="flex justify-between">
@@ -77,7 +77,10 @@ export const SwapWidget = () => {
                     </div>
                     {!!swSolBalance && <span>{swSolBalance.uiAmount} swSOL</span>}
                 </div>
-                <button className="btn btn-primary">{action.toUpperCase()}</button>
+                <button className="btn btn-secondary">{action.toUpperCase()}</button>
+                <p className="text-center">
+                    Chances impact: +0.00%
+                </p>
             </div>
         </div>
 
