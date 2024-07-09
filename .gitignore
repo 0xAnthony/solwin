@@ -2,6 +2,8 @@
 
 .nx/
 
+anchor/target/
+
 # dependencies
 /node_modules
 /.pnp
@@ -11,7 +13,7 @@
 /coverage
 
 # next.js
-/.next/
+/web/.next/
 /out/
 
 # production
