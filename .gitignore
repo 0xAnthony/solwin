@@ -1,6 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+.idea
+
 .nx/
+
+/anchor/target
 
 # dependencies
 /node_modules
@@ -11,7 +15,7 @@
 /coverage
 
 # next.js
-/.next/
+/web/.next/
 /out/
 
 # production
