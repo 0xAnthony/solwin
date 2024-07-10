@@ -66,11 +66,12 @@ export const SwapWidget = () => {
                     <a role="tab" className={`tab ${action === "deposit" && 'tab-active'}`} onClick={setActionDeposit}>Deposit</a>
                     <a role="tab" className={`tab ${action === "withdraw" && 'tab-active'}`} onClick={setActionWithdraw}>Withdraw</a>
                 </div>
-                    <label className="input input-bordered flex items-center">
+                    <label className="input input-bordered input-lg flex items-center pr-2">
                         <input type="text" className="grow" placeholder="Amount" value={inputValue} onChange={() => {}}/>
-                        <button className="btn btn-secondary btn-sm" onClick={setMax}>MAX</button>
+                        <button className="btn btn-secondary" onClick={setMax}>MAX</button>
                     </label>
                 <div className="flex flex-col">
+                    <h3>Balances :</h3>
                     <div className="flex justify-between">
                         {!!solBalance && <span>{valueToUi(solBalance)} SOL</span>}
                         {!!wSolBalance && <span>{wSolBalance.uiAmount} wSOL</span>}
@@ -83,6 +84,5 @@ export const SwapWidget = () => {
                 </p>
             </div>
         </div>
-
     );
 };

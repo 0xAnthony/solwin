@@ -1,14 +1,23 @@
 import {useEffect, useState} from "react";
 
+function secondsUntilMidnight() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const differenceInMilliseconds = midnight - now;
+    return Math.floor(differenceInMilliseconds / 1000);
+}
+
 export const Countdown = () => {
-    const [count, setCount] = useState(3612);
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
+        setCount(secondsUntilMidnight())
         const interval = setInterval(() => {
             if (count) {
                 setCount(count - 1);
             } else {
-                clearInterval(interval)
+                setCount(secondsUntilMidnight())
             }
         }, 1000);
 
@@ -16,7 +25,7 @@ export const Countdown = () => {
     }, [count]);
 
     return (
-        <span className="countdown font-mono text-2xl">
+        <span className="countdown">
             <span style={{"--value": Math.floor(count / 3600)}}></span>h
             <span style={{"--value": Math.floor(count % 3600 / 60)}}></span>m
             <span style={{"--value": count % 60 }}></span>s
