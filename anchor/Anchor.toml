@@ -5,14 +5,17 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-counter = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+
+[programs.devnet]
+solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "devnet"
+wallet = "~/WebstormProjects/solana-program-library/owner.json"
 
 [scripts]
 test = "../node_modules/.bin/nx run anchor:jest"
