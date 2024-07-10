@@ -1,6 +1,6 @@
 {
-  "/clusters/page": "app/clusters/page.js",
+  "/intro/page": "app/intro/page.js",
   "/account/[address]/page": "app/account/[address]/page.js",
   "/page": "app/page.js",
-  "/intro/page": "app/intro/page.js"
+  "/account/page": "app/account/page.js"
 }
