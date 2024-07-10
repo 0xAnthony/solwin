@@ -1,7 +1,8 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
 import { Solwin } from '../target/types/solwin';
-import {PublicKey} from "@solana/web3.js";
+import {ParsedAccountData, PublicKey} from "@solana/web3.js";
+import type {Reserve} from "@solana/spl-token-lending";
 
 describe('counter', () => {
   // Configure the client to use the local cluster.
@@ -18,9 +19,9 @@ describe('counter', () => {
           .accounts({
               reserveAccount: reservePublicKey,
           })
-          .rpc();
+          .view();
 
-      console.log('Current Exchange Rate:', currentRate);
+      console.log('Current Exchange Rate: :', currentRate);
 
       // Perform the assertion
       expect(currentRate).toBeDefined();

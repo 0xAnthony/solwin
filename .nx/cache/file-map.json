@@ -1,10 +1,11 @@
 {
   "version": "6.0",
-  "nxVersion": "19.0.0",
+  "nxVersion": "19.1.0",
   "deps": {
     "@coral-xyz/anchor": "^0.30.0",
     "@solana-developers/preset-next": "3.0.1",
     "@solana/spl-token": "0.4.6",
+    "@solana/spl-token-lending": "^0.3.9",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",
@@ -51,7 +52,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jest": "^29.4.1",
     "jest-environment-jsdom": "^29.4.1",
-    "nx": "19.0.0",
+    "nx": "19.1.0",
     "postcss": "8.4.21",
     "prettier": "^2.6.2",
     "tailwindcss": "3.2.7",
@@ -75,43 +76,232 @@
         "hash": "1598408354266276258"
       },
       {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": "README.md",
-        "hash": "7328773885932305664"
-      },
-      {
-        "file": "package.json",
-        "hash": "15806999370255816578"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "7180177343864892011"
-      },
-      {
-        "file": "nx.json",
-        "hash": "14557014133078539282"
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
       },
       {
         "file": "jest.config.ts",
         "hash": "3494843969422251966"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
       },
       {
         "file": "LICENSE",
         "hash": "3886324858050511294"
       },
       {
+        "file": "package.json",
+        "hash": "10601500778193198440"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "11528296135403674626"
+      },
+      {
         "file": ".gitignore",
         "hash": "11387346089728233192"
+      },
+      {
+        "file": "README.md",
+        "hash": "7328773885932305664"
+      },
+      {
+        "file": "nx.json",
+        "hash": "14557014133078539282"
       }
     ],
     "projectFileMap": {
+      "anchor": [
+        {
+          "file": "anchor/.anchor/test-ledger/faucet-keypair.json",
+          "hash": "2680320613272182013"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/genesis.bin",
+          "hash": "6983988053393250041"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/genesis.tar.bz2",
+          "hash": "5068886863302166103"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/ledger.lock",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000056.sst",
+          "hash": "11001844556874709547"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000057.sst",
+          "hash": "11773168603616254294"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000058.sst",
+          "hash": "3228214118180686244"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000059.sst",
+          "hash": "15493043698896569101"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000060.sst",
+          "hash": "2335074517969482814"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/000061.sst",
+          "hash": "9680833771235234411"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/CURRENT",
+          "hash": "4352893849866065448"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/IDENTITY",
+          "hash": "3652375825388993224"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/LOCK",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/LOG",
+          "hash": "6875179960470719641"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/LOG.old.1720547073240730",
+          "hash": "10113771993828098240"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/MANIFEST-000063",
+          "hash": "17358272858181821990"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000069",
+          "hash": "16787345706129294795"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000071",
+          "hash": "14345778977619375103"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/stake-account-keypair.json",
+          "hash": "6364852124538461468"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/tower-1_9-4i18Zeqp6pwB5Hkjsxguz2FRbgXoLBwyYTkWWwDPn4V6.bin",
+          "hash": "14901967177032485583"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/validator-keypair.json",
+          "hash": "637763747596681420"
+        },
+        {
+          "file": "anchor/.anchor/test-ledger/vote-account-keypair.json",
+          "hash": "13960259013541813023"
+        },
+        {
+          "file": "anchor/.eslintrc.json",
+          "hash": "10876657505767112116"
+        },
+        {
+          "file": "anchor/.swcrc",
+          "hash": "3236768094882387443"
+        },
+        {
+          "file": "anchor/Anchor.toml",
+          "hash": "4316544056237034891"
+        },
+        {
+          "file": "anchor/Cargo.lock",
+          "hash": "14092905199568642164"
+        },
+        {
+          "file": "anchor/Cargo.toml",
+          "hash": "18016256559089331344"
+        },
+        {
+          "file": "anchor/README.md",
+          "hash": "7511245087790753582"
+        },
+        {
+          "file": "anchor/jest.config.ts",
+          "hash": "10789820129713498849",
+          "deps": [
+            "npm:fs"
+          ]
+        },
+        {
+          "file": "anchor/migrations/deploy.ts",
+          "hash": "165601981430021943",
+          "deps": [
+            "npm:@coral-xyz/anchor"
+          ]
+        },
+        {
+          "file": "anchor/package-lock.json",
+          "hash": "6122490917108288406"
+        },
+        {
+          "file": "anchor/package.json",
+          "hash": "7599174938845115416",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js"
+          ]
+        },
+        {
+          "file": "anchor/programs/solwin/Cargo.toml",
+          "hash": "6954046450352304721"
+        },
+        {
+          "file": "anchor/programs/solwin/Xargo.toml",
+          "hash": "12304191003573283670"
+        },
+        {
+          "file": "anchor/programs/solwin/src/lib.rs",
+          "hash": "16198637734905645036"
+        },
+        {
+          "file": "anchor/project.json",
+          "hash": "141831645580095741"
+        },
+        {
+          "file": "anchor/src/index.ts",
+          "hash": "13779203017475462392"
+        },
+        {
+          "file": "anchor/src/solwin-exports.ts",
+          "hash": "16047327967225161559",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js"
+          ]
+        },
+        {
+          "file": "anchor/tests/solwin.spec.ts",
+          "hash": "12766694875005788775",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js",
+            "npm:@solana/spl-token-lending"
+          ]
+        },
+        {
+          "file": "anchor/tsconfig.json",
+          "hash": "10304993020986584308"
+        },
+        {
+          "file": "anchor/tsconfig.lib.json",
+          "hash": "12857729230989963964"
+        },
+        {
+          "file": "anchor/tsconfig.spec.json",
+          "hash": "17313551537729802733"
+        }
+      ],
       "web": [
         {
           "file": "web/.eslintrc.json",
@@ -364,190 +554,6 @@
         {
           "file": "web/tsconfig.json",
           "hash": "10836663897421372905"
-        }
-      ],
-      "anchor": [
-        {
-          "file": "anchor/.anchor/test-ledger/faucet-keypair.json",
-          "hash": "2680320613272182013"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/genesis.bin",
-          "hash": "6983988053393250041"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/genesis.tar.bz2",
-          "hash": "5068886863302166103"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/ledger.lock",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000056.sst",
-          "hash": "11001844556874709547"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000057.sst",
-          "hash": "11773168603616254294"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000058.sst",
-          "hash": "3228214118180686244"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000059.sst",
-          "hash": "15493043698896569101"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000060.sst",
-          "hash": "2335074517969482814"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000061.sst",
-          "hash": "9680833771235234411"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/CURRENT",
-          "hash": "4352893849866065448"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/IDENTITY",
-          "hash": "3652375825388993224"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOCK",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOG",
-          "hash": "6875179960470719641"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOG.old.1720547073240730",
-          "hash": "10113771993828098240"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/MANIFEST-000063",
-          "hash": "17358272858181821990"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000069",
-          "hash": "16787345706129294795"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000071",
-          "hash": "14345778977619375103"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/stake-account-keypair.json",
-          "hash": "6364852124538461468"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/tower-1_9-4i18Zeqp6pwB5Hkjsxguz2FRbgXoLBwyYTkWWwDPn4V6.bin",
-          "hash": "14901967177032485583"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/validator-keypair.json",
-          "hash": "637763747596681420"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/vote-account-keypair.json",
-          "hash": "13960259013541813023"
-        },
-        {
-          "file": "anchor/.eslintrc.json",
-          "hash": "10876657505767112116"
-        },
-        {
-          "file": "anchor/.swcrc",
-          "hash": "3236768094882387443"
-        },
-        {
-          "file": "anchor/Anchor.toml",
-          "hash": "4316544056237034891"
-        },
-        {
-          "file": "anchor/Cargo.lock",
-          "hash": "14092905199568642164"
-        },
-        {
-          "file": "anchor/Cargo.toml",
-          "hash": "18016256559089331344"
-        },
-        {
-          "file": "anchor/README.md",
-          "hash": "7511245087790753582"
-        },
-        {
-          "file": "anchor/jest.config.ts",
-          "hash": "10789820129713498849",
-          "deps": [
-            "npm:fs"
-          ]
-        },
-        {
-          "file": "anchor/migrations/deploy.ts",
-          "hash": "165601981430021943",
-          "deps": [
-            "npm:@coral-xyz/anchor"
-          ]
-        },
-        {
-          "file": "anchor/package.json",
-          "hash": "7599174938845115416",
-          "deps": [
-            "npm:@coral-xyz/anchor",
-            "npm:@solana/web3.js"
-          ]
-        },
-        {
-          "file": "anchor/programs/solwin/Cargo.toml",
-          "hash": "6954046450352304721"
-        },
-        {
-          "file": "anchor/programs/solwin/Xargo.toml",
-          "hash": "12304191003573283670"
-        },
-        {
-          "file": "anchor/programs/solwin/src/lib.rs",
-          "hash": "16085676083892944231"
-        },
-        {
-          "file": "anchor/project.json",
-          "hash": "141831645580095741"
-        },
-        {
-          "file": "anchor/src/index.ts",
-          "hash": "13779203017475462392"
-        },
-        {
-          "file": "anchor/tsconfig.json",
-          "hash": "10304993020986584308"
-        },
-        {
-          "file": "anchor/tsconfig.lib.json",
-          "hash": "12857729230989963964"
-        },
-        {
-          "file": "anchor/tsconfig.spec.json",
-          "hash": "17313551537729802733"
-        },
-        {
-          "file": "anchor/tests/solwin.spec.ts",
-          "hash": "4838419896473131229",
-          "deps": [
-            "npm:@coral-xyz/anchor",
-            "npm:@solana/web3.js"
-          ]
-        },
-        {
-          "file": "anchor/src/solwin-exports.ts",
-          "hash": "16047327967225161559",
-          "deps": [
-            "npm:@coral-xyz/anchor",
-            "npm:@solana/web3.js"
-          ]
         }
       ]
     }

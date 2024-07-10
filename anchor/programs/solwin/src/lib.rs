@@ -14,11 +14,7 @@ pub mod solwin {
         let reserve_account_info = &ctx.accounts.reserve_account;
         let reserve_data = &reserve_account_info.data.borrow();
 
-        // Deserialize the reserve data
         let reserve = Reserve::unpack(reserve_data).unwrap();
-
-
-        // Call the collateral_exchange_rate method
         let collateral_exchange_rate = reserve.collateral_exchange_rate().unwrap();
 
         let rate = collateral_exchange_rate.collateral_to_liquidity(1).unwrap();
