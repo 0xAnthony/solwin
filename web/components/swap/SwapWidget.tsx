@@ -3,12 +3,15 @@ import {useWallet} from "@solana/wallet-adapter-react";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {useMemo, useState} from "react";
 import {SWSOL_MINTER, WSOL_MINTER} from "@/constants";
+import {useSolwinProgram} from "@/components/solwin/solwin-data-access";
 
 const valueToUi = (value) => {
     return Math.round((value / LAMPORTS_PER_SOL) * 100000) / 100000
 }
 
 export const SwapWidget = () => {
+    const {getExchangeRate} = useSolwinProgram();
+
     const [action, setAction] = useState("deposit");
     const [inputValue, setInputValue] = useState("");
 
@@ -77,6 +80,7 @@ export const SwapWidget = () => {
                         {!!wSolBalance && <span>{wSolBalance.uiAmount} wSOL</span>}
                     </div>
                     {!!swSolBalance && <span>{swSolBalance.uiAmount} swSOL</span>}
+                    {!!getExchangeRate.data && <span>Rate {getExchangeRate.data.toString()}</span>}
                 </div>
                 <button className="btn btn-secondary">{action.toUpperCase()}</button>
                 <p className="text-center">

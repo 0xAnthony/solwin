@@ -11,6 +11,26 @@ exports.id = "vendor-chunks/bufferutil";
 exports.ids = ["vendor-chunks/bufferutil"];
 exports.modules = {
 
+/***/ "(ssr)/../anchor/node_modules/bufferutil/fallback.js":
+/*!*****************************************************!*\
+  !*** ../anchor/node_modules/bufferutil/fallback.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+eval("\n/**\n * Masks a buffer using the given mask.\n *\n * @param {Buffer} source The buffer to mask\n * @param {Buffer} mask The mask to use\n * @param {Buffer} output The buffer where to store the result\n * @param {Number} offset The offset at which to start writing\n * @param {Number} length The number of bytes to mask.\n * @public\n */ const mask = (source, mask, output, offset, length)=>{\n    for(var i = 0; i < length; i++){\n        output[offset + i] = source[i] ^ mask[i & 3];\n    }\n};\n/**\n * Unmasks a buffer using the given mask.\n *\n * @param {Buffer} buffer The buffer to unmask\n * @param {Buffer} mask The mask to use\n * @public\n */ const unmask = (buffer, mask)=>{\n    // Required until https://github.com/nodejs/node/issues/9006 is resolved.\n    const length = buffer.length;\n    for(var i = 0; i < length; i++){\n        buffer[i] ^= mask[i & 3];\n    }\n};\nmodule.exports = {\n    mask,\n    unmask\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi4vYW5jaG9yL25vZGVfbW9kdWxlcy9idWZmZXJ1dGlsL2ZhbGxiYWNrLmpzIiwibWFwcGluZ3MiOiJBQUFBO0FBRUE7Ozs7Ozs7OztDQVNDLEdBQ0QsTUFBTUEsT0FBTyxDQUFDQyxRQUFRRCxNQUFNRSxRQUFRQyxRQUFRQztJQUMxQyxJQUFLLElBQUlDLElBQUksR0FBR0EsSUFBSUQsUUFBUUMsSUFBSztRQUMvQkgsTUFBTSxDQUFDQyxTQUFTRSxFQUFFLEdBQUdKLE1BQU0sQ0FBQ0ksRUFBRSxHQUFHTCxJQUFJLENBQUNLLElBQUksRUFBRTtJQUM5QztBQUNGO0FBRUE7Ozs7OztDQU1DLEdBQ0QsTUFBTUMsU0FBUyxDQUFDQyxRQUFRUDtJQUN0Qix5RUFBeUU7SUFDekUsTUFBTUksU0FBU0csT0FBT0gsTUFBTTtJQUM1QixJQUFLLElBQUlDLElBQUksR0FBR0EsSUFBSUQsUUFBUUMsSUFBSztRQUMvQkUsTUFBTSxDQUFDRixFQUFFLElBQUlMLElBQUksQ0FBQ0ssSUFBSSxFQUFFO0lBQzFCO0FBQ0Y7QUFFQUcsT0FBT0MsT0FBTyxHQUFHO0lBQUVUO0lBQU1NO0FBQU8iLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi4vYW5jaG9yL25vZGVfbW9kdWxlcy9idWZmZXJ1dGlsL2ZhbGxiYWNrLmpzP2UzY2IiXSwic291cmNlc0NvbnRlbnQiOlsiJ3VzZSBzdHJpY3QnO1xuXG4vKipcbiAqIE1hc2tzIGEgYnVmZmVyIHVzaW5nIHRoZSBnaXZlbiBtYXNrLlxuICpcbiAqIEBwYXJhbSB7QnVmZmVyfSBzb3VyY2UgVGhlIGJ1ZmZlciB0byBtYXNrXG4gKiBAcGFyYW0ge0J1ZmZlcn0gbWFzayBUaGUgbWFzayB0byB1c2VcbiAqIEBwYXJhbSB7QnVmZmVyfSBvdXRwdXQgVGhlIGJ1ZmZlciB3aGVyZSB0byBzdG9yZSB0aGUgcmVzdWx0XG4gKiBAcGFyYW0ge051bWJlcn0gb2Zmc2V0IFRoZSBvZmZzZXQgYXQgd2hpY2ggdG8gc3RhcnQgd3JpdGluZ1xuICogQHBhcmFtIHtOdW1iZXJ9IGxlbmd0aCBUaGUgbnVtYmVyIG9mIGJ5dGVzIHRvIG1hc2suXG4gKiBAcHVibGljXG4gKi9cbmNvbnN0IG1hc2sgPSAoc291cmNlLCBtYXNrLCBvdXRwdXQsIG9mZnNldCwgbGVuZ3RoKSA9PiB7XG4gIGZvciAodmFyIGkgPSAwOyBpIDwgbGVuZ3RoOyBpKyspIHtcbiAgICBvdXRwdXRbb2Zmc2V0ICsgaV0gPSBzb3VyY2VbaV0gXiBtYXNrW2kgJiAzXTtcbiAgfVxufTtcblxuLyoqXG4gKiBVbm1hc2tzIGEgYnVmZmVyIHVzaW5nIHRoZSBnaXZlbiBtYXNrLlxuICpcbiAqIEBwYXJhbSB7QnVmZmVyfSBidWZmZXIgVGhlIGJ1ZmZlciB0byB1bm1hc2tcbiAqIEBwYXJhbSB7QnVmZmVyfSBtYXNrIFRoZSBtYXNrIHRvIHVzZVxuICogQHB1YmxpY1xuICovXG5jb25zdCB1bm1hc2sgPSAoYnVmZmVyLCBtYXNrKSA9PiB7XG4gIC8vIFJlcXVpcmVkIHVudGlsIGh0dHBzOi8vZ2l0aHViLmNvbS9ub2RlanMvbm9kZS9pc3N1ZXMvOTAwNiBpcyByZXNvbHZlZC5cbiAgY29uc3QgbGVuZ3RoID0gYnVmZmVyLmxlbmd0aDtcbiAgZm9yICh2YXIgaSA9IDA7IGkgPCBsZW5ndGg7IGkrKykge1xuICAgIGJ1ZmZlcltpXSBePSBtYXNrW2kgJiAzXTtcbiAgfVxufTtcblxubW9kdWxlLmV4cG9ydHMgPSB7IG1hc2ssIHVubWFzayB9O1xuIl0sIm5hbWVzIjpbIm1hc2siLCJzb3VyY2UiLCJvdXRwdXQiLCJvZmZzZXQiLCJsZW5ndGgiLCJpIiwidW5tYXNrIiwiYnVmZmVyIiwibW9kdWxlIiwiZXhwb3J0cyJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(ssr)/../anchor/node_modules/bufferutil/fallback.js\n");
+
+/***/ }),
+
+/***/ "(ssr)/../anchor/node_modules/bufferutil/index.js":
+/*!**************************************************!*\
+  !*** ../anchor/node_modules/bufferutil/index.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("\ntry {\n    module.exports = __webpack_require__(/*! node-gyp-build */ \"node-gyp-build\")(__dirname);\n} catch (e) {\n    module.exports = __webpack_require__(/*! ./fallback */ \"(ssr)/../anchor/node_modules/bufferutil/fallback.js\");\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi4vYW5jaG9yL25vZGVfbW9kdWxlcy9idWZmZXJ1dGlsL2luZGV4LmpzIiwibWFwcGluZ3MiOiJBQUFBO0FBRUEsSUFBSTtJQUNGQSxPQUFPQyxPQUFPLEdBQUdDLG1CQUFPQSxDQUFDLHdDQUFrQkM7QUFDN0MsRUFBRSxPQUFPQyxHQUFHO0lBQ1ZKLDZHQUF5QjtBQUMzQiIsInNvdXJjZXMiOlsid2VicGFjazovLy8uLi9hbmNob3Ivbm9kZV9tb2R1bGVzL2J1ZmZlcnV0aWwvaW5kZXguanM/ZmUwZCJdLCJzb3VyY2VzQ29udGVudCI6WyIndXNlIHN0cmljdCc7XG5cbnRyeSB7XG4gIG1vZHVsZS5leHBvcnRzID0gcmVxdWlyZSgnbm9kZS1neXAtYnVpbGQnKShfX2Rpcm5hbWUpO1xufSBjYXRjaCAoZSkge1xuICBtb2R1bGUuZXhwb3J0cyA9IHJlcXVpcmUoJy4vZmFsbGJhY2snKTtcbn1cbiJdLCJuYW1lcyI6WyJtb2R1bGUiLCJleHBvcnRzIiwicmVxdWlyZSIsIl9fZGlybmFtZSIsImUiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(ssr)/../anchor/node_modules/bufferutil/index.js\n");
+
+/***/ }),
+
 /***/ "(ssr)/../node_modules/bufferutil/fallback.js":
 /*!**********************************************!*\
   !*** ../node_modules/bufferutil/fallback.js ***!

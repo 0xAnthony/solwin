@@ -10,6 +10,16 @@ exports.id = "vendor-chunks/bs58";
 exports.ids = ["vendor-chunks/bs58"];
 exports.modules = {
 
+/***/ "(ssr)/../anchor/node_modules/bs58/index.js":
+/*!********************************************!*\
+  !*** ../anchor/node_modules/bs58/index.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("var basex = __webpack_require__(/*! base-x */ \"(ssr)/../anchor/node_modules/base-x/src/index.js\");\nvar ALPHABET = \"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz\";\nmodule.exports = basex(ALPHABET);\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi4vYW5jaG9yL25vZGVfbW9kdWxlcy9iczU4L2luZGV4LmpzIiwibWFwcGluZ3MiOiJBQUFBLElBQUlBLFFBQVFDLG1CQUFPQSxDQUFDO0FBQ3BCLElBQUlDLFdBQVc7QUFFZkMsT0FBT0MsT0FBTyxHQUFHSixNQUFNRSIsInNvdXJjZXMiOlsid2VicGFjazovLy8uLi9hbmNob3Ivbm9kZV9tb2R1bGVzL2JzNTgvaW5kZXguanM/Y2RjZiJdLCJzb3VyY2VzQ29udGVudCI6WyJ2YXIgYmFzZXggPSByZXF1aXJlKCdiYXNlLXgnKVxudmFyIEFMUEhBQkVUID0gJzEyMzQ1Njc4OUFCQ0RFRkdISktMTU5QUVJTVFVWV1hZWmFiY2RlZmdoaWprbW5vcHFyc3R1dnd4eXonXG5cbm1vZHVsZS5leHBvcnRzID0gYmFzZXgoQUxQSEFCRVQpXG4iXSwibmFtZXMiOlsiYmFzZXgiLCJyZXF1aXJlIiwiQUxQSEFCRVQiLCJtb2R1bGUiLCJleHBvcnRzIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(ssr)/../anchor/node_modules/bs58/index.js\n");
+
+/***/ }),
+
 /***/ "(ssr)/../node_modules/bs58/index.js":
 /*!*************************************!*\
   !*** ../node_modules/bs58/index.js ***!

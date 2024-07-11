@@ -5,10 +5,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+solwin = "BGmcQ3wc1HD5BcDfPcxh1GkVnZ1EWFi6iocBbyzbx7zX"
 
 [programs.devnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+solwin = "BGmcQ3wc1HD5BcDfPcxh1GkVnZ1EWFi6iocBbyzbx7zX"
 
 [registry]
 url = "https://api.apr.dev"

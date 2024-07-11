@@ -21,7 +21,7 @@ export function getsolwinProgramId(cluster: Cluster) {
     case 'devnet':
     case 'testnet':
       // This is the program ID for the solwin program on devnet and testnet.
-      return new PublicKey('ETMR2uxTjbFDYrhaQcPRJZyAYNDdSDcuCDg4doTvqPXv');
+      return new PublicKey('BGmcQ3wc1HD5BcDfPcxh1GkVnZ1EWFi6iocBbyzbx7zX');
     case 'mainnet-beta':
     default:
       return solwin_PROGRAM_ID;

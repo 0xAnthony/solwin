@@ -11,6 +11,16 @@ exports.id = "vendor-chunks/dot-case";
 exports.ids = ["vendor-chunks/dot-case"];
 exports.modules = {
 
+/***/ "(ssr)/../anchor/node_modules/dot-case/dist.es2015/index.js":
+/*!************************************************************!*\
+  !*** ../anchor/node_modules/dot-case/dist.es2015/index.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   dotCase: () => (/* binding */ dotCase)\n/* harmony export */ });\n/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tslib */ \"(ssr)/../anchor/node_modules/tslib/tslib.es6.mjs\");\n/* harmony import */ var no_case__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! no-case */ \"(ssr)/../anchor/node_modules/no-case/dist.es2015/index.js\");\n\n\nfunction dotCase(input, options) {\n    if (options === void 0) {\n        options = {};\n    }\n    return (0,no_case__WEBPACK_IMPORTED_MODULE_0__.noCase)(input, (0,tslib__WEBPACK_IMPORTED_MODULE_1__.__assign)({\n        delimiter: \".\"\n    }, options));\n} //# sourceMappingURL=index.js.map\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi4vYW5jaG9yL25vZGVfbW9kdWxlcy9kb3QtY2FzZS9kaXN0LmVzMjAxNS9pbmRleC5qcyIsIm1hcHBpbmdzIjoiOzs7Ozs7QUFBaUM7QUFDQTtBQUMxQixTQUFTRSxRQUFRQyxLQUFLLEVBQUVDLE9BQU87SUFDbEMsSUFBSUEsWUFBWSxLQUFLLEdBQUc7UUFBRUEsVUFBVSxDQUFDO0lBQUc7SUFDeEMsT0FBT0gsK0NBQU1BLENBQUNFLE9BQU9ILCtDQUFRQSxDQUFDO1FBQUVLLFdBQVc7SUFBSSxHQUFHRDtBQUN0RCxFQUNBLGlDQUFpQyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uLi9hbmNob3Ivbm9kZV9tb2R1bGVzL2RvdC1jYXNlL2Rpc3QuZXMyMDE1L2luZGV4LmpzPzI5ZDQiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgX19hc3NpZ24gfSBmcm9tIFwidHNsaWJcIjtcbmltcG9ydCB7IG5vQ2FzZSB9IGZyb20gXCJuby1jYXNlXCI7XG5leHBvcnQgZnVuY3Rpb24gZG90Q2FzZShpbnB1dCwgb3B0aW9ucykge1xuICAgIGlmIChvcHRpb25zID09PSB2b2lkIDApIHsgb3B0aW9ucyA9IHt9OyB9XG4gICAgcmV0dXJuIG5vQ2FzZShpbnB1dCwgX19hc3NpZ24oeyBkZWxpbWl0ZXI6IFwiLlwiIH0sIG9wdGlvbnMpKTtcbn1cbi8vIyBzb3VyY2VNYXBwaW5nVVJMPWluZGV4LmpzLm1hcCJdLCJuYW1lcyI6WyJfX2Fzc2lnbiIsIm5vQ2FzZSIsImRvdENhc2UiLCJpbnB1dCIsIm9wdGlvbnMiLCJkZWxpbWl0ZXIiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(ssr)/../anchor/node_modules/dot-case/dist.es2015/index.js\n");
+
+/***/ }),
+
 /***/ "(ssr)/../node_modules/dot-case/dist.es2015/index.js":
 /*!*****************************************************!*\
   !*** ../node_modules/dot-case/dist.es2015/index.js ***!
