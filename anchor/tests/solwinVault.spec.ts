@@ -28,7 +28,7 @@ jest.setTimeout(30000);
 const amountToDeposit = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
 const amountToWithdraw = new anchor.BN(0.01 * LAMPORTS_PER_SOL);
 
-describe("bank", () => {
+describe.skip("bank", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 

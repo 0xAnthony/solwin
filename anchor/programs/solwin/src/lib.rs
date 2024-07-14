@@ -29,7 +29,7 @@ use state::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("7NY8eVWnjoRu3ARMJLXfS775pTbWCTnji2eEcFoXspuJ");
+declare_id!("4CuVLYq58YN5r3MifT2Akf5qdhhbbh5oCofApksFLg4F");
 
 #[program]
 pub mod solwin {
@@ -85,7 +85,6 @@ pub mod solwin {
 
  
     pub fn create_token(ctx: Context<CreateToken>,metadata: InitTokenParams) -> Result<()> {
-        msg!("ENTRY BEFORE CALL CREATE");
         instructions::create_tokens(ctx, metadata)
     }
 
@@ -102,8 +101,20 @@ pub mod solwin {
      *             GENERAL FUNCTIONS (merging sol & token management)
      * 
      ***********************************************/
-    
-    
+    // enable to create 2 ctx from one initialize to keep separate func
+    // so merged all in one instead of entry func calling sub func
+
+    pub fn create_solwin_app(ctx: Context<Initialize>, metadata: InitTokenParams) -> Result<()> {
+        instructions::create_solwin(ctx, metadata)
+    }   
+
+    pub fn deposit_solwin_app(ctx: Context<DepositAndMint>, amount: u64) -> Result<()> {
+        instructions::deposit_and_mint(ctx, amount)
+    }   
+
+    pub fn withdraw_solwin_app(ctx: Context<BurnAndWithdraw>, amount: u64) -> Result<()> {
+        instructions::burn_and_withdraw(ctx, amount)
+    }   
     // initialization : init the vault and the token by calling: initialize_solwin and create_token
     // pub fn initialize(ctx: Context<InitializeAll>, metadata: InitTokenParams) -> Result<()> {
 

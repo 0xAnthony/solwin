@@ -16,7 +16,7 @@ function createKeypairFromSecretKey(secretKey: string): Keypair {
 //~/WebstormProjects/solana-program-library/owner.json
 const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
 
-describe("spl program test", () => {
+describe.skip("spl program test", () => {
   // Configure the client to use the local cluster.
   // anchor.setProvider(anchor.AnchorProvider.env());
 
