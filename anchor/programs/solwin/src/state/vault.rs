@@ -1,11 +1,8 @@
 use anchor_lang::prelude::*;
 
-#[account]
-pub struct SolwinVault {
-
-}
 
 #[account]
 pub struct Vault {
-    pub balance: u64,
+    pub sol_balance: u64,
+    pub token_balance: u64,
 }

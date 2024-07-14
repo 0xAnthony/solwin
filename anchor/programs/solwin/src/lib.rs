@@ -4,24 +4,15 @@ use anchor_lang::prelude::*;
 use solana_program::program_pack::Pack;
 use spl_token_lending::state::Reserve;
 use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
-use anchor_lang::system_program;
-// use crate::state::{SolwinVault};
-
-
-// use spl_token::state::{Account, Mint};
-// use spl_token::state::Account as TokenAccount;
-// use solana_program::entrypoint::ProgramResult;
-// use solana_program::entrypoint_deprecated::ProgramResult;
-
-use anchor_spl::{
-    associated_token::AssociatedToken,
-    metadata::{
-        create_metadata_accounts_v3, mpl_token_metadata::types::DataV2, CreateMetadataAccountsV3,
-        Metadata as Metaplex,
-    },
-    token::{mint_to, Mint, MintTo, Token, TokenAccount},
-};
-use crate::state::{InitTokenParams, Initialize};
+// use anchor_lang::system_program;
+// use anchor_spl::{
+//     associated_token::AssociatedToken,
+//     metadata::{
+//         create_metadata_accounts_v3, mpl_token_metadata::types::DataV2, CreateMetadataAccountsV3,
+//         Metadata as Metaplex,
+//     },
+//     token::{mint_to, Mint, MintTo, Token, TokenAccount},
+// };
 
 
 pub mod constants;
@@ -31,11 +22,14 @@ pub mod state;
 
 use instructions::*;
 use state::*;
-use errors::*;
-// Old programId: 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
+// use errors::*;
+
+// use constants::*;
+// Old programId: 
+// 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("FpjzAaGLjJSeQiaukESCLv9wqp4WXPLtLe3Yn2AiByuZ");
+declare_id!("Em2enZKMKNc9Jsoc6DCNdaAmjTdaJ5Xjn4pm5Adr3mXT");
 
 #[program]
 pub mod solwin {
@@ -70,15 +64,15 @@ pub mod solwin {
      * 
      ***********************************************/
     pub fn initialize_solwin(ctx: Context<InitializeBank>) -> Result<()> {
-        initialize_bank(ctx)
+        instructions::initialize_bank(ctx)
     }
 
     pub fn deposit_solwin(ctx: Context<Deposit>, amount: u64) -> Result<()> {
-        deposit(ctx, amount)
+        instructions::deposit(ctx, amount)
     }
 
     pub fn withdraw_solwin(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
-        withdraw(ctx, amount)
+        instructions::withdraw(ctx, amount)
     }
 
     
@@ -92,15 +86,15 @@ pub mod solwin {
  
     pub fn create_token(ctx: Context<CreateToken>,metadata: InitTokenParams) -> Result<()> {
         msg!("ENTRY BEFORE CALL CREATE");
-        create_tokens(ctx, metadata)
+        instructions::create_tokens(ctx, metadata)
     }
 
     pub fn mint_token(ctx: Context<MintTokens>, amount: u64) -> Result<()> {
-        mint_tokens(ctx, amount)
+        instructions::mint_tokens(ctx, amount)
     }
 
     pub fn burn_token(ctx: Context<BurnTokens>, amount: u64) -> Result<()> {
-        burn_tokens(ctx, amount)
+        instructions::burn_tokens(ctx, amount)
     }
 
     /***********************************************
@@ -182,55 +176,6 @@ pub mod solwin {
 }
 
 
-
-// #[derive(Accounts)]
-// #[instruction(params: InitTokenParams)]
-// pub struct InitializeAll<'info> {
-//     #[account(mut)]
-//     pub payer: Signer<'info>,
-    
-//     #[account(
-//         init,
-//         seeds = [b"mint"],
-//         bump,
-//         payer = payer,
-//         mint::decimals = params.decimals,
-//         mint::authority = mint,
-//     )]
-//     pub mint: Account<'info, Mint>,
-    
-//     #[account(
-//         init,
-//         payer = payer,
-//         space = 8 + 8,
-//         seeds = [b"vault17"],
-//         bump
-//     )]
-//     pub vault: Account<'info, Vault>,
-    
-//     pub user: Signer<'info>,
-    
-//     pub token_program: Program<'info, Token>,
-//     pub token_metadata_program: Program<'info, Metaplex>,
-//     pub system_program: Program<'info, System>,
-//     pub rent: Sysvar<'info, Rent>,
-    
-//     #[account(mut)]
-//     pub metadata: UncheckedAccount<'info>,
-// }
-
-// STRUCT Initialize 
-// #[derive(Accounts)]
-// pub struct Initialize<'info> {
-//     #[account(signer)]
-//     pub authority: AccountInfo<'info>,
-//     #[account(init, payer = authority, space = 8 + 8)]
-//     pub vault: AccountInfo<'info>,
-//     #[account(init, payer = authority, space = 8 + 8)]
-//     pub token: AccountInfo<'info>,
-//     pub rent: Sysvar<'info, Rent>,
-//     pub system_program: Program<'info, System>,
-// }
 
 // LENDING DATA
 #[derive(Accounts)]

@@ -4,7 +4,7 @@ import { Solwin } from "../target/types/solwin";
 import { PublicKey } from "@solana/web3.js";
 
 describe("counter", () => {
-  // Configure the client to use the local cluster.
+  // Configure the client to use the devnet cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
@@ -112,29 +112,4 @@ describe("counter", () => {
   //   );
   //   expect(userAccount).toBeNull();
   // });
-});
-
-// @todo split in another file : Vault, deposit, withdraw tests
-describe("Solwin_vault", () => {
-  // Configure the client to use the local cluster.
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
-  const payer = provider.wallet as anchor.Wallet;
-
-  const program = anchor.workspace.Solwin as Program<Solwin>;
-
-  it("Create solwin vault", async () => {
-    // await program.methods
-    //   .createSolwinVault()
-    //   .accounts({
-    //     // counter: counterKeypair.publicKey,
-    //     // payer: payer.publicKey,
-    //   })
-    // //   .signers([counterKeypair])
-    //   .rpc();
-    // const currentCount = await program.account.counter.fetch(
-    // //   counterKeypair.publicKey
-    // );
-    // // expect(currentCount.count).toEqual(0);
-  });
 });

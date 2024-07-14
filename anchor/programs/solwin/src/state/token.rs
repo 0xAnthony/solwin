@@ -8,4 +8,3 @@ pub struct InitTokenParams {
     pub decimals: u8,
 }
 
-pub struct Initialize {}

@@ -1,248 +1,212 @@
-// import * as anchor from "@coral-xyz/anchor";
-// import { Program } from "@coral-xyz/anchor";
-// import { Solwin } from "../target/types/solwin";
-// import {
-//   PublicKey,
-//   Keypair,
-//   SystemProgram,
-//   LAMPORTS_PER_SOL,
-// } from "@solana/web3.js";
-// import dotenv from "dotenv";
-// import { it } from "node:test";
-// dotenv.config();
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+// import { Bank } from "../target/types/bank";
+import { Solwin } from "../target/types/solwin";
 
-// jest.setTimeout(30000); // 30 seconds timeout
+import {
+  PublicKey,
+  Keypair,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+import dotenv from "dotenv";
+dotenv.config();
 
-// async function getBalance(provider, publicKey) {
-//   return await provider.connection.getBalance(publicKey);
-// }
+import { expect } from "@jest/globals";
+import {
+  getConfig,
+  getProgram,
+  getBalance,
+  createWalletAndAirdrop,
+  createKeypairFromSecretKey,
+} from "./testHelper";
 
-// // function createKeypairFromSecretKey(secretKeyBase58: string): Keypair {
-// //   const secretKey = Uint8Array.from(Buffer.from(secretKeyBase58, "base58"));
-// //   return Keypair.fromSecretKey(secretKey);
-// // }
+// Set 30 sec timeout for jest
+jest.setTimeout(30000);
 
-// function createKeypairFromSecretKey(secretKey: string): Keypair {
-//   const secretKeyArray = JSON.parse(secretKey);
-//   const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
-//   return Keypair.fromSecretKey(secretKeyUint8Array);
-// }
+// TEST CONSTANTS & VARIABLES:
+const amountToDeposit = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
+const amountToWithdraw = new anchor.BN(0.01 * LAMPORTS_PER_SOL);
 
-// const vaultSeed = "solwin_vault12"; //10
+describe("bank", () => {
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-// describe("solwin_vault", () => {
-//   // Configure the client to use the local cluster.
-//   const provider = anchor.AnchorProvider.env();
-//   anchor.setProvider(provider);
+  const program = anchor.workspace.Solwin as Program<Solwin>;
 
-//   const program = anchor.workspace.Solwin as Program<Solwin>;
+  // //~/WebstormProjects/solana-program-library/owner.json
+  const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
 
-//   //     // CREATION
-//   //   it("Creates a Solwin Vault", async () => {
-//   //     // Generate a keypair from the secret key
-//   //     const user = createKeypairFromSecretKey(process.env.WALLET_PRIVATE_KEY);
+  // const { provider, program, owner } = await getConfig();
+  //   anchor.setProvider(provider);
 
-//   //     // Generate a new keypair for the user
-//   //     // const user = Keypair.generate();
+  it("Initializes the vault", async () => {
+    // const { provider, program, owner } = await getConfig();
+    // const bankWallet = await createWallet();
+    console.log("Owner PublicKey:", owner.publicKey.toBase58());
 
-//   //     // // Airdrop SOL to the user
-//   //     // const airdropSignature = await provider.connection.requestAirdrop(
-//   //     //   user.publicKey,
-//   //     //   2 * LAMPORTS_PER_SOL
-//   //     // );
+    const [vaultPda, vaultBump] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault17")],
+        program.programId
+      );
+    // vaultPda = vault;
 
-//   //     // // Confirm the transaction using TransactionConfirmationStrategy
-//   //     // const latestBlockhash = await provider.connection.getLatestBlockhash();
-//   //     // await provider.connection.confirmTransaction({
-//   //     //   signature: airdropSignature,
-//   //     //   blockhash: latestBlockhash.blockhash,
-//   //     //   lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-//   //     // });
+    const info = await program.provider.connection.getAccountInfo(vaultPda);
+    if (info) {
+      return; // Do not attempt to initialize if already initialized
+    }
 
-//   //     // Check the balance of the user account
-//   //     let balance = await getBalance(provider, user.publicKey);
-//   //     console.log("User balance:", balanceBefore);
+    let tx = await program.methods
+      .initializeSolwin()
+      .accounts({
+        vault: vaultPda,
+        user: owner.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([owner])
+      .rpc();
+    // .simulate()
+    //       // .then((simulatedResult) => {
+    //       //   console.log(simulatedResult.logs);
+    //       // });
+    //       //.rpc();
+    console.log("Vault PDA:", vaultPda.toString());
+    console.log("Vault Bump:", vaultBump.toString());
+    console.log("initializeBank tx:", tx);
 
-//   //     // If balance is less than the required amount, throw an error
-//   //     if (balance < 2 * LAMPORTS_PER_SOL) {
-//   //       throw new Error(
-//   //         "Not enough SOL in the wallet. Please use a faucet or deposit SOL manually."
-//   //       );
-//   //     }
+    let vaultAccount = await program.account.vault.fetch(vaultPda);
+    let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
-//   //     // Derive the PDA for the Solwin Vault
-//   //     const [vaultPda, bump] = await anchor.web3.PublicKey.findProgramAddress(
-//   //       [Buffer.from(vaultSeed)],
-//   //       program.programId
-//   //     );
+    console.log(
+      "Vault balance: BEFORE DEPOSIT: ",
+      vaultBalanceBeforeDeposit.toString()
+    );
+    expect(vaultAccount.sol_balance.toString()).toBe("0");
+  });
 
-//   //     console.log("User PublicKey:", user.publicKey.toBase58());
-//   //     console.log("Vault PDA:", vaultPda.toBase58());
+  it("Deposits SOL into the vault", async () => {
+    const [vaultPda, vaultBump] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault17")],
+        program.programId
+      );
+    let vaultAccount = await program.account.vault.fetch(vaultPda);
+    let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
-//   //     // Call the create_solwin_vault function
-//   //     // await program.methods
-//   //     //   .createSolwinVault()
-//   //     //   .accounts({
-//   //     //     solwinVault: vaultPda,
-//   //     //     user: user.publicKey,
-//   //     //     systemProgram: SystemProgram.programId,
-//   //     //   })
-//   //     //   .signers([user])
-//   //     //   .simulate()
-//   //     //   .then((simulatedResult) => {
-//   //     //     console.log(simulatedResult.logs);
-//   //     //   });
-//   //     //   .rpc();
+    console.log(
+      "Vault balance: BEFORE DEPOSIT: ",
+      vaultBalanceBeforeDeposit.toString()
+    );
+    // const user = await createWallet();
+    // display the user public key
+    // console.log("User PublicKey:", user.publicKey.toBase58());
+    // [vaultPda, vaultBump] = await anchor.web3.PublicKey.findProgramAddress(
+    //   [Buffer.from("vault1")],
+    //   program.programId
+    // );
 
-//   //     // Call the create_solwin_vault function with simulation
-//   //     // try {
-//   //     //   const result = await program.methods
-//   //     //     .createSolwinVault()
-//   //     //     .accounts({
-//   //     //       solwinVault: vaultPda,
-//   //     //       user: user.publicKey,
-//   //     //       systemProgram: SystemProgram.programId,
-//   //     //     })
-//   //     //     .signers([user])
-//   //     //     .simulate()
-//   //     //     .rpc();
-//   //     //   //.then((simulatedResult) => {
-//   //     //   //  console.log(simulatedResult.logs);
-//   //     //   //});
-//   //     //
-//   //     //   console.log(result.logs);
-//   //     // } catch (error) {
-//   //     //   console.error("Transaction simulation failed:", error);
-//   //     // }
+    await program.methods
+      .depositSolwin(amountToDeposit)
+      .accounts({
+        vault: vaultPda,
+        user: owner.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([owner]) //user
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 500_000,
+        }),
+      ])
+      .rpc();
 
-//   //     // Call the create_solwin_vault function with increased compute units
-//   //     try {
-//   //       const tx = await program.methods
-//   //         .createSolwinVault()
-//   //         .accounts({
-//   //           solwinVault: vaultPda,
-//   //           user: user.publicKey,
-//   //           systemProgram: SystemProgram.programId,
-//   //         })
-//   //         .signers([user])
-//   //         .preInstructions([
-//   //           anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
-//   //             units: 500_000,
-//   //           }),
-//   //         ])
-//   //         .simulate()
-//   //         .then((simulatedResult) => {
-//   //           console.log(simulatedResult.logs);
-//   //         });
-//   //       //.rpc();
+    // vaultAccount = await program.account.vault.fetch(vaultPda);
+    // console.log("Vault balance:", vaultAccount.balance.toString());
+    let vaultBalanceAfterDeposit = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: AFTER DEPOSIT: ",
+      vaultBalanceAfterDeposit.toString()
+    );
+    let difFromDeposit = vaultBalanceAfterDeposit - vaultBalanceBeforeDeposit;
+    console.log("Dif from deposit: ", difFromDeposit.toString());
+    expect(difFromDeposit.toString()).toBe(amountToDeposit.toString());
+  });
 
-//   //       console.log("Transaction successful with tx:", tx);
-//   //     } catch (error) {
-//   //       console.error("Transaction failed:", error);
-//   //     }
+  it("Withdraws SOL from the vault", async () => {
+    const amountToDeposit = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
 
-//   //     // Fetch the Solwin Vault account
-//   //     //     try {
-//   //     //       const vaultAccount = await program.account.solwinVault.fetch(vaultPda);
-//   //     //       console.log("Solwin Vault Account:", vaultAccount);
-//   //     //     } catch (error) {
-//   //     //       console.error("Failed to fetch Solwin Vault account:", error);
-//   //     //     }
-//   //   });
-//   it("Deposits SOL into the Solwin Vault", async () => {
-//     // Generate a keypair from the secret key
-//     const user = await createKeypairFromSecretKey(
-//       process.env.WALLET_PRIVATE_KEY
-//     );
+    const [vaultPda, vaultBump] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault17")],
+        program.programId
+      );
+    let vaultAccount = await program.account.vault.fetch(vaultPda);
+    let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
-//     // Check the balance of the user account
-//     const balanceBefore = await getBalance(provider, user.publicKey);
-//     console.log("User balance before deposit:", balanceBefore);
+    console.log(
+      "Vault balance: BEFORE DEPOSIT: ",
+      vaultBalanceBeforeDeposit.toString()
+    );
 
-//     // If balance is less than the required amount, throw an error
-//     if (balanceBefore < 2 * LAMPORTS_PER_SOL) {
-//       throw new Error(
-//         "Not enough SOL in the wallet. Please use a faucet or deposit SOL manually."
-//       );
-//     }
+    await program.methods
+      .depositSolwin(amountToDeposit)
+      .accounts({
+        vault: vaultPda,
+        user: owner.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([owner]) //user
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 500_000,
+        }),
+      ])
+      .rpc();
 
-//     // Derive the PDA for the Solwin Vault
-//     const [vaultPda, bump] = await anchor.web3.PublicKey.findProgramAddress(
-//       [Buffer.from(vaultSeed)],
-//       program.programId
-//     );
-//     const userKey = await user.publicKey.toBase58();
+    // vaultAccount = await program.account.vault.fetch(vaultPda);
+    // console.log("Vault balance:", vaultAccount.balance.toString());
+    let vaultBalanceAfterDeposit = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: AFTER DEPOSIT: ",
+      vaultBalanceAfterDeposit.toString()
+    );
+    let difFromDeposit = vaultBalanceAfterDeposit - vaultBalanceBeforeDeposit;
+    console.log("Dif from deposit: ", difFromDeposit.toString());
+    expect(difFromDeposit.toString()).toBe(amountToDeposit.toString());
 
-//     console.log("User PublicKey:", userKey);
-//     console.log("Vault PDA:", vaultPda.toBase58());
+    // const user = await createWallet();
+    // display the user public key
+    // console.log("User PublicKey:", user.publicKey.toBase58());
+    // [vaultPda, vaultBump] = await anchor.web3.PublicKey.findProgramAddress(
+    //   [Buffer.from("vault1")],
+    //   program.programId
+    // );
+    // const amountToWithdraw = new anchor.BN(0.01 * LAMPORTS_PER_SOL);
 
-//     // Call the create_solwin_vault function with simulation
-//     // try {
-//     //   // const result =
-//     //   await program.methods
-//     //     .createSolwinVault()
-//     //     .accounts({
-//     //       solwinVault: vaultPda,
-//     //       user: user.publicKey,
-//     //       systemProgram: SystemProgram.programId,
-//     //     })
-//     //     .signers([user])
-//     //     .rpc();
-//     // } catch (error) {
-//     //   console.error("Transaction simulation failed:", error);
-//     // }
+    await program.methods
+      .withdrawSolwin(amountToWithdraw)
+      .accounts({
+        vault: vaultPda,
+        user: owner.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([owner])
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 500_000,
+        }),
+      ])
+      .rpc();
 
-//     try {
-//       const tx = await program.methods
-//         .createSolwinVault()
-//         .accounts({
-//           solwinVault: vaultPda,
-//           user: user.publicKey,
-//           systemProgram: SystemProgram.programId,
-//         })
-//         .signers([user])
-//         .preInstructions([
-//           anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
-//             units: 500_000,
-//           }),
-//         ])
-//         .rpc();
-//       // .simulate()
-//       // .then((simulatedResult) => {
-//       //   console.log(simulatedResult.logs);
-//       // });
-//       //.rpc();
-
-//       console.log("Transaction successful with tx:", tx);
-//     } catch (error) {
-//       console.error("Transaction failed:", error);
-//     }
-//     // const amountToDeposit = 0.005 * LAMPORTS_PER_SOL;
-//     const amountToDeposit = await new anchor.BN(0.005 * LAMPORTS_PER_SOL);
-
-//     // Call the deposit function
-//     try {
-//       const tx = await program.methods
-//         .deposit(amountToDeposit)
-//         .accounts({
-//           solwinVault: vaultPda,
-//           user: user.publicKey,
-//           systemProgram: SystemProgram.programId,
-//         })
-//         .signers([user])
-//         .rpc();
-
-//       console.log("Transaction successful with tx:", tx);
-//       // get the user balance after deposit
-//       const balanceAfter = await getBalance(provider, user.publicKey);
-//       console.log("User balance after deposit:", balanceAfter);
-//     } catch (error) {
-//       console.error("Transaction failed:", error);
-//     }
-
-//     //expect balance before deposit - balance after deposit to be >= to the amount deposited
-//     // await expect(balanceBefore - balanceAfter).toBeGreaterThanOrEqual(
-//     //   amountToDeposit
-//     // );
-//   });
-// });
+    vaultAccount = await program.account.vault.fetch(vaultPda);
+    // console.log("Vault balance:", vaultAccount.balance.toString());
+    let vaultBalanceAfterWithdraw = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: AFTER WITHDRAW: ",
+      vaultBalanceAfterWithdraw.toString()
+    );
+    let difFromWithdraw = vaultBalanceAfterDeposit - vaultBalanceAfterWithdraw;
+    expect(difFromWithdraw.toString()).toBe(amountToWithdraw.toString());
+  });
+});
