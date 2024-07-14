@@ -6,7 +6,7 @@
 
 /anchor/target
 
-/test-ledger/
+test-ledger/
 
 # dependencies
 /node_modules
