@@ -1,27 +1,21 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
+
+[programs.devnet]
+solwin = "7NY8eVWnjoRu3ARMJLXfS775pTbWCTnji2eEcFoXspuJ"
 
 [programs.localnet]
 solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
 
-[programs.devnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
-
 [registry]
 url = "https://api.devnet.solana.com"
-# url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/WebstormProjects/solana-program-library/owner.json"
-# wallet = "~/.config/solana/id.json"
-
-# [provider]
-# cluster = "localnet"
-# wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "../node_modules/.bin/nx run anchor:jest"

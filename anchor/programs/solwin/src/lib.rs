@@ -29,7 +29,7 @@ use state::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("Em2enZKMKNc9Jsoc6DCNdaAmjTdaJ5Xjn4pm5Adr3mXT");
+declare_id!("7NY8eVWnjoRu3ARMJLXfS775pTbWCTnji2eEcFoXspuJ");
 
 #[program]
 pub mod solwin {

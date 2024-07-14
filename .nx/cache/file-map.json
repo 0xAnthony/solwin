@@ -69,6 +69,48 @@
   },
   "nxJsonPlugins": [],
   "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "nx.json",
+        "hash": "14557014133078539282"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
+      },
+      {
+        "file": "package.json",
+        "hash": "11176315210990420182"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "12527754992228055428"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "5724493968319023548"
+      },
+      {
+        "file": "README.md",
+        "hash": "7328773885932305664"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "LICENSE",
+        "hash": "3886324858050511294"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "1598408354266276258"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "3494843969422251966"
+      }
+    ],
     "projectFileMap": {
       "web": [
         {
@@ -326,96 +368,16 @@
       ],
       "anchor": [
         {
-          "file": "anchor/.anchor/test-ledger/faucet-keypair.json",
-          "hash": "2680320613272182013"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/genesis.bin",
-          "hash": "6983988053393250041"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/genesis.tar.bz2",
-          "hash": "5068886863302166103"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/ledger.lock",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000056.sst",
-          "hash": "11001844556874709547"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000057.sst",
-          "hash": "11773168603616254294"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000058.sst",
-          "hash": "3228214118180686244"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000059.sst",
-          "hash": "15493043698896569101"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000060.sst",
-          "hash": "2335074517969482814"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/000061.sst",
-          "hash": "9680833771235234411"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/CURRENT",
-          "hash": "4352893849866065448"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/IDENTITY",
-          "hash": "3652375825388993224"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOCK",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOG",
-          "hash": "6875179960470719641"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/LOG.old.1720547073240730",
-          "hash": "10113771993828098240"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/MANIFEST-000063",
-          "hash": "17358272858181821990"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000069",
-          "hash": "16787345706129294795"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/rocksdb/OPTIONS-000071",
-          "hash": "14345778977619375103"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/stake-account-keypair.json",
-          "hash": "6364852124538461468"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/tower-1_9-4i18Zeqp6pwB5Hkjsxguz2FRbgXoLBwyYTkWWwDPn4V6.bin",
-          "hash": "14901967177032485583"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/validator-keypair.json",
-          "hash": "637763747596681420"
-        },
-        {
-          "file": "anchor/.anchor/test-ledger/vote-account-keypair.json",
-          "hash": "13960259013541813023"
+          "file": "anchor/.env.example",
+          "hash": "7500177271660862441"
         },
         {
           "file": "anchor/.eslintrc.json",
           "hash": "10876657505767112116"
+        },
+        {
+          "file": "anchor/.gitignore",
+          "hash": "13603088859507085958"
         },
         {
           "file": "anchor/.swcrc",
@@ -423,11 +385,11 @@
         },
         {
           "file": "anchor/Anchor.toml",
-          "hash": "4316544056237034891"
+          "hash": "10901928332165420294"
         },
         {
           "file": "anchor/Cargo.lock",
-          "hash": "14092905199568642164"
+          "hash": "12544151016714958530"
         },
         {
           "file": "anchor/Cargo.toml",
@@ -461,15 +423,63 @@
         },
         {
           "file": "anchor/programs/solwin/Cargo.toml",
-          "hash": "6954046450352304721"
+          "hash": "11642766139964296335"
         },
         {
           "file": "anchor/programs/solwin/Xargo.toml",
           "hash": "12304191003573283670"
         },
         {
+          "file": "anchor/programs/solwin/src/constants.rs",
+          "hash": "2792351005639121470"
+        },
+        {
+          "file": "anchor/programs/solwin/src/errors.rs",
+          "hash": "17159744798263404061"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/burn.rs",
+          "hash": "15629148644203553340"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/create_tokens.rs",
+          "hash": "3483307271218153708"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/create_vault.rs",
+          "hash": "17243597342635509669"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/deposit.rs",
+          "hash": "2664573646400049198"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/mint.rs",
+          "hash": "9124079838391465125"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/mod.rs",
+          "hash": "17364427846459485541"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/withdraw.rs",
+          "hash": "5042062739371537816"
+        },
+        {
           "file": "anchor/programs/solwin/src/lib.rs",
-          "hash": "16085676083892944231"
+          "hash": "17124851543758490864"
+        },
+        {
+          "file": "anchor/programs/solwin/src/state/mod.rs",
+          "hash": "2827990584962796166"
+        },
+        {
+          "file": "anchor/programs/solwin/src/state/token.rs",
+          "hash": "7172102495344485356"
+        },
+        {
+          "file": "anchor/programs/solwin/src/state/vault.rs",
+          "hash": "5888133322533340798"
         },
         {
           "file": "anchor/project.json",
@@ -489,10 +499,40 @@
         },
         {
           "file": "anchor/tests/solwin.spec.ts",
-          "hash": "4838419896473131229",
+          "hash": "14260906762659541574",
           "deps": [
             "npm:@coral-xyz/anchor",
             "npm:@solana/web3.js"
+          ]
+        },
+        {
+          "file": "anchor/tests/solwinToken.spec.ts",
+          "hash": "13676426486709666847",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/spl-token",
+            "npm:@solana/web3.js",
+            "npm:assert",
+            "npm:bn.js"
+          ]
+        },
+        {
+          "file": "anchor/tests/solwinVault.spec.ts",
+          "hash": "3392472195616115242",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js",
+            "npm:dotenv",
+            "npm:@jest/globals"
+          ]
+        },
+        {
+          "file": "anchor/tests/testHelper.ts",
+          "hash": "16916796022951574253",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js",
+            "npm:dotenv"
           ]
         },
         {
@@ -506,50 +546,16 @@
         {
           "file": "anchor/tsconfig.spec.json",
           "hash": "17313551537729802733"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/EW3nf86jKmELwQTHx29WGM2RVbdFz1KJUMARBLu3jJgQ.solwin.log",
+          "hash": "16837825004876512627"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/7NY8eVWnjoRu3ARMJLXfS775pTbWCTnji2eEcFoXspuJ.solwin.log",
+          "hash": "1404211648690356412"
         }
       ]
-    },
-    "nonProjectFiles": [
-      {
-        "file": ".gitignore",
-        "hash": "11387346089728233192"
-      },
-      {
-        "file": "LICENSE",
-        "hash": "3886324858050511294"
-      },
-      {
-        "file": "README.md",
-        "hash": "7328773885932305664"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "3494843969422251966"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": "nx.json",
-        "hash": "14557014133078539282"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "7180177343864892011"
-      },
-      {
-        "file": "package.json",
-        "hash": "11176315210990420182"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
-      },
-      {
-        "file": "vercel.json",
-        "hash": "1598408354266276258"
-      }
-    ]
+    }
   }
 }

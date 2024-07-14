@@ -44,12 +44,11 @@ describe("bank", () => {
     // const { provider, program, owner } = await getConfig();
     // const bankWallet = await createWallet();
     console.log("Owner PublicKey:", owner.publicKey.toBase58());
-
-    const [vaultPda, vaultBump] =
-      await anchor.web3.PublicKey.findProgramAddress(
-        [Buffer.from("vault17")],
-        program.programId
-      );
+    // findProgramAddressSync
+    const [vaultPda, vaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault22")],
+      program.programId
+    );
     // vaultPda = vault;
 
     const info = await program.provider.connection.getAccountInfo(vaultPda);
@@ -76,21 +75,22 @@ describe("bank", () => {
     console.log("initializeBank tx:", tx);
 
     let vaultAccount = await program.account.vault.fetch(vaultPda);
+    console.log("account", program.account);
+    // console.log("AMOUNTS:", program.accounts);
     let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
     console.log(
       "Vault balance: BEFORE DEPOSIT: ",
       vaultBalanceBeforeDeposit.toString()
     );
-    expect(vaultAccount.sol_balance.toString()).toBe("0");
+    expect(vaultAccount.solBalance.toString()).toBe("0");
   });
 
   it("Deposits SOL into the vault", async () => {
-    const [vaultPda, vaultBump] =
-      await anchor.web3.PublicKey.findProgramAddress(
-        [Buffer.from("vault17")],
-        program.programId
-      );
+    const [vaultPda, vaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault22")],
+      program.programId
+    );
     let vaultAccount = await program.account.vault.fetch(vaultPda);
     let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
@@ -136,11 +136,10 @@ describe("bank", () => {
   it("Withdraws SOL from the vault", async () => {
     const amountToDeposit = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
 
-    const [vaultPda, vaultBump] =
-      await anchor.web3.PublicKey.findProgramAddress(
-        [Buffer.from("vault17")],
-        program.programId
-      );
+    const [vaultPda, vaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault22")],
+      program.programId
+    );
     let vaultAccount = await program.account.vault.fetch(vaultPda);
     let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
 
