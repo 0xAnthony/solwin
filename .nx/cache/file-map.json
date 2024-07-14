@@ -1,6 +1,6 @@
 {
   "version": "6.0",
-  "nxVersion": "19.0.0",
+  "nxVersion": "19.1.0",
   "deps": {
     "@coral-xyz/anchor": "^0.30.0",
     "@solana-developers/preset-next": "3.0.1",
@@ -51,7 +51,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jest": "^29.4.1",
     "jest-environment-jsdom": "^29.4.1",
-    "nx": "19.0.0",
+    "nx": "19.1.0",
     "postcss": "8.4.21",
     "prettier": "^2.6.2",
     "tailwindcss": "3.2.7",
@@ -69,48 +69,6 @@
   },
   "nxJsonPlugins": [],
   "fileMap": {
-    "nonProjectFiles": [
-      {
-        "file": "vercel.json",
-        "hash": "1598408354266276258"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": "README.md",
-        "hash": "7328773885932305664"
-      },
-      {
-        "file": "package.json",
-        "hash": "15806999370255816578"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "7180177343864892011"
-      },
-      {
-        "file": "nx.json",
-        "hash": "14557014133078539282"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "3494843969422251966"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
-      },
-      {
-        "file": "LICENSE",
-        "hash": "3886324858050511294"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "11387346089728233192"
-      }
-    ],
     "projectFileMap": {
       "web": [
         {
@@ -522,16 +480,12 @@
           "hash": "13779203017475462392"
         },
         {
-          "file": "anchor/tsconfig.json",
-          "hash": "10304993020986584308"
-        },
-        {
-          "file": "anchor/tsconfig.lib.json",
-          "hash": "12857729230989963964"
-        },
-        {
-          "file": "anchor/tsconfig.spec.json",
-          "hash": "17313551537729802733"
+          "file": "anchor/src/solwin-exports.ts",
+          "hash": "16047327967225161559",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/web3.js"
+          ]
         },
         {
           "file": "anchor/tests/solwin.spec.ts",
@@ -542,14 +496,60 @@
           ]
         },
         {
-          "file": "anchor/src/solwin-exports.ts",
-          "hash": "16047327967225161559",
-          "deps": [
-            "npm:@coral-xyz/anchor",
-            "npm:@solana/web3.js"
-          ]
+          "file": "anchor/tsconfig.json",
+          "hash": "10304993020986584308"
+        },
+        {
+          "file": "anchor/tsconfig.lib.json",
+          "hash": "12857729230989963964"
+        },
+        {
+          "file": "anchor/tsconfig.spec.json",
+          "hash": "17313551537729802733"
         }
       ]
-    }
+    },
+    "nonProjectFiles": [
+      {
+        "file": ".gitignore",
+        "hash": "11387346089728233192"
+      },
+      {
+        "file": "LICENSE",
+        "hash": "3886324858050511294"
+      },
+      {
+        "file": "README.md",
+        "hash": "7328773885932305664"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "3494843969422251966"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "nx.json",
+        "hash": "14557014133078539282"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "7180177343864892011"
+      },
+      {
+        "file": "package.json",
+        "hash": "11176315210990420182"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "1598408354266276258"
+      }
+    ]
   }
 }
