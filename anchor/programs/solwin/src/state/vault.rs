@@ -4,3 +4,8 @@ use anchor_lang::prelude::*;
 pub struct SolwinVault {
 
 }
+
+#[account]
+pub struct Vault {
+    pub balance: u64,
+}

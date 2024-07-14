@@ -105,6 +105,7 @@ describe("spl program test", () => {
   //     uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
 
   const MINT_SEED = "mint";
+  const BURN_SEED = "bunr";
   // const payer = program.provider.publicKey;
   const metadata = {
     name: "Net2Dev SPL Rewards Token",
@@ -113,7 +114,7 @@ describe("spl program test", () => {
     decimals: 9,
   };
   const mintAmount = 10;
-
+  const burnAmount = 5;
   // const [mint] = anchor.web3.PublicKey.findProgramAddressSync(
   //   [Buffer.from(MINT_SEED)],
   //   program.programId
@@ -211,7 +212,7 @@ describe("spl program test", () => {
 
     const context = {
       mint: mintAccount,
-      destination,
+      payer_mint_ata: destination,
       payer: owner.publicKey,
       rent: web3.SYSVAR_RENT_PUBKEY,
       systemProgram: web3.SystemProgram.programId,
@@ -233,6 +234,51 @@ describe("spl program test", () => {
       initialBalance + mintAmount,
       postBalance,
       "Compare balances, it must be equal"
+    );
+  });
+
+  it("burn tokens", async () => {
+    const origin = await anchor.utils.token.associatedAddress({
+      mint: mintAccount,
+      owner: owner.publicKey, //payer,
+    });
+
+    let initialBalance: number | null;
+
+    try {
+      const balance = await program.provider.connection.getTokenAccountBalance(
+        origin
+      );
+      initialBalance = balance.value.uiAmount;
+    } catch {
+      // Token account not yet initiated has 0 balance
+      initialBalance = 0;
+    }
+
+    const context = {
+      mint: mintAccount,
+      payer_mint_ata: origin,
+      payer: owner.publicKey,
+      rent: web3.SYSVAR_RENT_PUBKEY,
+      systemProgram: web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+    };
+
+    const txHash = await program.methods
+      .burnToken(new BN(burnAmount * 10 ** 9))
+      .accounts(context)
+      .rpc();
+    await program.provider.connection.confirmTransaction(txHash);
+    console.log(`  https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
+
+    const postBalance = (
+      await program.provider.connection.getTokenAccountBalance(origin)
+    ).value.uiAmount;
+    assert.equal(
+      initialBalance - burnAmount,
+      postBalance,
+      "Compare balances after burning, it must be equal"
     );
   });
 });

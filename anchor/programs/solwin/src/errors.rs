@@ -23,3 +23,10 @@ pub enum TokenError {
     // ChoiceIndexOutOfScope,
 }
 
+#[error_code]
+pub enum BankError {
+    #[msg("Insufficient funds in the vault.")]
+    InsufficientFunds,
+    #[msg("Insufficient funds in the user account.")]
+    InsufficientUserFunds,
+}

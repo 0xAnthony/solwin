@@ -5,19 +5,14 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-solwin = "7e23U7nmj3yTNWmjoxyVzaBFJcNG8KpPhZHwXtJVN1FZ"
+solwin = "FpjzAaGLjJSeQiaukESCLv9wqp4WXPLtLe3Yn2AiByuZ"
 
 [programs.localnet]
-solwin = "7e23U7nmj3yTNWmjoxyVzaBFJcNG8KpPhZHwXtJVN1FZ"
+solwin = "9YbMugdpK7ZWF5csRLu2Grg6ybzeF2GobdPARuB8JJyz"
 
 [registry]
 url = "https://api.devnet.solana.com"
-# [registry]
-# url = "https://api.apr.dev"
 
-# [provider]
-# cluster = "Localnet"
-# wallet = "~/.config/solana/id.json"
 [provider]
 cluster = "Devnet"
 wallet = "~/WebstormProjects/solana-program-library/owner.json"

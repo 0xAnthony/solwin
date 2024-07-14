@@ -15121,6 +15121,11 @@
       },
       {
         "source": "anchor",
+        "target": "npm:@jest/globals",
+        "type": "static"
+      },
+      {
+        "source": "anchor",
         "target": "npm:@solana/spl-token",
         "type": "static"
       },
