@@ -5,6 +5,7 @@ import * as web3 from "@solana/web3.js";
 import type { Solwin } from "../target/types/solwin";
 import assert from "assert";
 import BN from "bn.js";
+import { expect } from "@jest/globals";
 
 jest.setTimeout(30000); // 30 seconds timeout
 

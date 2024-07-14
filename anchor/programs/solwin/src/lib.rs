@@ -13,15 +13,18 @@ use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 //     },
 //     token::{mint_to, Mint, MintTo, Token, TokenAccount},
 // };
+use crate::xorshift::{RngAccount};
 
 
 pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
+pub mod helpers;
 
 use instructions::*;
 use state::*;
+use helpers::*;
 // use errors::*;
 
 // use constants::*;
@@ -29,7 +32,7 @@ use state::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("4CuVLYq58YN5r3MifT2Akf5qdhhbbh5oCofApksFLg4F");
+declare_id!("2eZtifywfY8XvC81YW8qCJ1NhEUCgYGqWPHybgFzn1kT");
 
 #[program]
 pub mod solwin {
@@ -115,49 +118,34 @@ pub mod solwin {
     pub fn withdraw_solwin_app(ctx: Context<BurnAndWithdraw>, amount: u64) -> Result<()> {
         instructions::burn_and_withdraw(ctx, amount)
     }   
-    // initialization : init the vault and the token by calling: initialize_solwin and create_token
-    // pub fn initialize(ctx: Context<InitializeAll>, metadata: InitTokenParams) -> Result<()> {
 
-    //     let initialize_solwin_ctx = Context::new(
-    //         ctx.program_id, // Identifiant du programme
-    //         InitializeSolwin {
-    //             // payer: ctx.accounts.payer.clone(), // Compte payeur
-    //             vault: ctx.accounts.vault.clone(), // Compte vault
-    //             user: ctx.accounts.user.clone(), // Compte utilisateur
-    //             system_program: ctx.accounts.system_program.clone(), // Programme système
-    //             // rent: ctx.accounts.rent.clone(), // Sysvar rent
-    //         },
-    //         ctx.remaining_accounts, // Comptes restants
-    //                 &[], // Seeds pour signer les transactions
-
-    //     );
-
-    //     initialize_solwin(initialize_solwin_ctx)?;
-
-
-    //     let create_token_ctx = Context::new(
-    //         ctx.program_id, // Identifiant du programme
-    //         CreateToken {
-    //             payer: ctx.accounts.payer.clone(), // Compte payeur
-    //             mint: ctx.accounts.mint.clone(), // Compte mint
-    //             metadata: ctx.accounts.metadata.clone(), // Metadata
-    //             // token_account: ctx.accounts.token_account.clone(), // Compte token
-    //             token_program: ctx.accounts.token_program.clone(), // Programme token
-    //             token_metadata_program: ctx.accounts.token_metadata_program.clone(), // Programme metadata
-    //             system_program: ctx.accounts.system_program.clone(), // Programme système
-    //             rent: ctx.accounts.rent.clone(), // Sysvar rent
-    //         },
-    //         ctx.remaining_accounts, // Comptes restants
-    //                 &[], // Seeds pour signer les transactions
-
-    //     );
-
-
-    //     create_token(create_token_ctx, metadata)?;
-    //     Ok(())
-    // }
-
-
+    /***********************************************
+     * 
+     *             RANDOMNESS (xorshift, waiting for VRF implementation)
+     * 
+     ***********************************************/
+    pub fn init_xorshift(ctx: Context<InitializeXorshift>,  seed32: u32, seed64: u64) -> Result<()> {
+        helpers::initialize_xorshift(ctx, seed32, seed64)
+    }  
+    
+    // pub fn demo_xorshift(ctx: Context<GenerateXorshift>) -> Result<()> {
+    //     helpers::generate_xorshift32(ctx);
+    //     helpers::generate_xorshift64(ctx);
+    //     helpers::generate_xorshift64_f64(ctx);
+    //     Ok()
+    // }  
+    pub fn generate_xorshift32(ctx: Context<GenerateXorshift>) -> Result<u32> {
+        let rand_num = helpers::generate_xorshift32(ctx)?;
+        Ok(rand_num)
+    }  
+    pub fn generate_xorshift64(ctx: Context<GenerateXorshift>) -> Result<u64> {
+        let rand_num = helpers::generate_xorshift64(ctx)?;
+        Ok(rand_num)
+    }  
+    pub fn generate_xorshift64_f64(ctx: Context<GenerateXorshift>) -> Result<f64> {
+        let rand_num = helpers::generate_xorshift64_f64(ctx)?;
+        Ok(rand_num)
+    }  
 
     
   // OLD STUFF (TO DELETE ONCE WE PROGRESSED)

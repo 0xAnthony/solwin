@@ -2,6 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Solwin } from "../target/types/solwin";
 import { PublicKey } from "@solana/web3.js";
+import { expect } from "@jest/globals";
 
 describe("counter", () => {
   // Configure the client to use the devnet cluster.
