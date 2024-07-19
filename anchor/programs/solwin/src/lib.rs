@@ -32,7 +32,7 @@ use helpers::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("2eZtifywfY8XvC81YW8qCJ1NhEUCgYGqWPHybgFzn1kT");
+declare_id!("6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5");
 
 #[program]
 pub mod solwin {
@@ -147,7 +147,23 @@ pub mod solwin {
         Ok(rand_num)
     }  
 
-    
+    /***********************************************
+     * 
+     *             CRON COUNTER exp
+     * 
+     ***********************************************/
+    // pub fn initialize_counter(ctx: Context<InitializeCounter>, thread_id: Vec<u8>) -> Result<()> {
+    //     instructions::initialize_counter(ctx, thread_id) 
+    // }
+
+    // pub fn increment_counter(ctx: Context<IncrementCounter>) -> Result<()> {
+    //     instructions::increment_counter(ctx)
+    // }
+
+    // pub fn reset_counter(ctx: Context<ResetCounter>) -> Result<()> {
+    //     instructions::reset_counter(ctx)
+    // }
+
   // OLD STUFF (TO DELETE ONCE WE PROGRESSED)
   // pub fn close(_ctx: Context<CloseCounter>) -> Result<()> {
   //   Ok(())
@@ -172,6 +188,31 @@ pub mod solwin {
   //   Ok(())
   // }
 
+    /***********************************************
+     * 
+     *             LOTTERY FEATURES
+     * 
+     ***********************************************/
+    pub fn initialize_master_lottery(ctx: Context<InitializeMasterLottery>) -> Result<()> {
+        instructions::initialize_master_lottery(ctx)
+     
+    }  
+
+    pub fn initialize_lottery(ctx: Context<InitializeLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
+        instructions::initialize_lottery(ctx, ticket_price, round_duration, round_close_slot)
+    }
+
+    pub fn initialize_round(ctx: Context<InitializeRound>) -> Result<()> {
+        instructions::initialize_round(ctx)
+    }
+
+    pub fn buy_ticket(ctx: Context<BuyTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::buy_ticket(ctx, lottery_id, round_id)
+    }
+
+    pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::close_round(ctx, lottery_id, round_id)
+    }
 }
 
 

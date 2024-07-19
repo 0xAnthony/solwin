@@ -4,7 +4,7 @@ import { Solwin } from "../target/types/solwin";
 import { PublicKey } from "@solana/web3.js";
 import { expect } from "@jest/globals";
 
-describe("counter", () => {
+describe.skip("counter", () => {
   // Configure the client to use the devnet cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);

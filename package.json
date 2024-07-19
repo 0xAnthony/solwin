@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@clockwork-xyz/sdk": "^0.3.4",
     "@coral-xyz/anchor": "^0.30.0",
     "@solana-developers/preset-next": "3.0.1",
     "@solana/spl-token": "0.4.6",
