@@ -12,6 +12,9 @@ pub mod init_lottery;
 pub mod init_round;
 pub mod buy_ticket;
 pub mod close_round;
+pub mod f_init_solwin;
+pub mod f_init_lottery;
+pub mod f_init_round;
 // pub mod counter;
 
 pub use create_vault::*;
@@ -28,4 +31,7 @@ pub use init_lottery::*;
 pub use init_round::*;
 pub use buy_ticket::*;
 pub use close_round::*;
+pub use f_init_solwin::*;
+pub use f_init_lottery::*;
+pub use f_init_round::*;
 // pub use counter::*;

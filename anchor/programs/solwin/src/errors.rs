@@ -25,6 +25,8 @@ pub enum LotteryError {
     InvalidRoundId,
     #[msg("Round not closeable")]
     RoundNotCloseable,
+    #[msg("Invalid lottery account")]
+    InvalidAccount,
 }
 
 // #[error_code]
