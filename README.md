@@ -94,3 +94,18 @@ Build the web app
 ```shell
 npm run build
 ```
+
+# PROJECT:
+
+~~## clockwork~~
+
+~~in anchor folder~~
+// linux:
+~~sudo apt-get update && \ ~~
+~~sudo apt-get upgrade && \ ~~
+~~sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev~~
+//
+~~cargo install -f --locked clockwork-cli~~
+
+~~in root~~
+~~npm i @clockwork-xyz/sdk~~

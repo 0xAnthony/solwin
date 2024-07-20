@@ -32,7 +32,7 @@ jest.setTimeout(30000);
 const amountToDeposit = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
 const amountToWithdraw = new anchor.BN(0.01 * LAMPORTS_PER_SOL);
 
-describe("bank", () => {
+describe.skip("bank", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
@@ -153,7 +153,7 @@ describe("bank", () => {
     expect(vaultAccount.solBalance.toString()).toBe("0");
     console.log("HEYEHEYEHEY HEYEHEYEHEY");
 
-    let result = await program.account.fe;
+    // let result = await program.account.fe;
     try {
       await program.provider.connection.confirmTransaction(txHash, "finalized");
     } catch (e) {

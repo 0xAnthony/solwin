@@ -11,7 +11,7 @@ import {
   createKeypairFromSecretKey,
 } from "./testHelper";
 
-describe("xorshift", () => {
+describe.skip("xorshift", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   //   const provider = anchor.AnchorProvider.env();

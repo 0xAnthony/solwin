@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-solwin = "2eZtifywfY8XvC81YW8qCJ1NhEUCgYGqWPHybgFzn1kT"
+solwin = "6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5"
 
 [programs.localnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+solwin = "6EwyAhuhHh284x5r7CFDNS4cu8BacZ7YZbTuhaeNXmNj"
 
 [registry]
 url = "https://api.devnet.solana.com"
