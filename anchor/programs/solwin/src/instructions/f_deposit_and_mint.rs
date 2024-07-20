@@ -13,17 +13,21 @@ use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 use anchor_lang::system_program;
 use crate::state::{ Vault};
 // use crate::errors::{VaultError};
-use crate::constants::{VAULT_SEED, TOKEN_MINT_SEED};
+use crate::constants::{VAULT_SEED, TOKEN_MINT_SEED, LOTTERY_SEED, USER_SEED};
+use crate::errors::LotteryError;
+use crate::instructions::f_init_lottery::{FLottery};
 
 
 
-pub fn deposit_and_mint(ctx: Context<DepositAndMint>, amount: u64) -> Result<()> {
+pub fn f_deposit_and_mint(ctx: Context<FDepositAndMint>, lottery_id: u32, amount: u64) -> Result<()> {
     // let vault = &mut ctx.accounts.vault;
     // let user = &mut ctx.accounts.user;
         
     // Check user has enough SOL
     // require!(**user.to_account_info().lamports.borrow() >= amount, BankError::InsufficientUserFunds);
-
+    if lottery_id != ctx.accounts.lottery.id {
+        return err!(LotteryError::InvalidLotteryId);
+    }
     // Deposit SOL to vault
 
     let cpi_context = CpiContext::new(
@@ -63,24 +67,30 @@ pub fn deposit_and_mint(ctx: Context<DepositAndMint>, amount: u64) -> Result<()>
 
 
 #[derive(Accounts)]
-pub struct DepositAndMint<'info> {
+pub struct FDepositAndMint<'info> {
     // Vault
     #[account(
-        seeds = [LOTTERY_SEED, &(lottery.id).to_le_bytes()],
+        mut,
+        seeds = [LOTTERY_SEED, &lottery.id.to_le_bytes()],
         bump = lottery.bump // Vérifie le bump stocké
     )]
     pub lottery: Account<'info, FLottery>,
-    #[account(mut, seeds = [VAULT_SEED, (lottery.id).to_le_bytes()], bump)]
+    #[account(mut,
+        seeds = [VAULT_SEED, &lottery.id.to_le_bytes()], bump
+    )]
     pub vault: Account<'info, Vault>,
     #[account(mut)]
     pub user: Signer<'info>, // repeat payer
     // pub system_program: Program<'info, System>,
     #[account( 
         init_if_needed,
-        space =,
-        seeds = [USER_SEED, (lottery.id).to_le_bytes(), signer.key().as_ref()], 
+        payer = user,
+        space = 8 + 8 + 8,
+        seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
         bump)]
     pub user_data: Account<'info, UserData>,
+    #[account(mut)]
+    pub signer: Signer<'info>,
     // Token
     #[account(
         mut,

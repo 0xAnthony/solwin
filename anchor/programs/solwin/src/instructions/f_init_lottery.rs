@@ -33,13 +33,13 @@ pub fn f_init_lottery(ctx: Context<FInitLottery>, ticket_price: u64, round_durat
     // Add params for lending here (add..)
 
    let (lottery_key, bump) = Pubkey::find_program_address(
-        &[LOTTERY_SEED, &(lottery.last_lottery_id + 1).to_le_bytes()],
+        &[LOTTERY_SEED, &(master_lottery.last_lottery_id + 1).to_le_bytes()],
         ctx.program_id,
     );
 
-    if lottery.key != lottery_key {
-        return err!(LotteryError::InvalidAccount);
-    }
+    // if lottery.key != lottery_key {
+    //     return err!(LotteryError::InvalidAccount);
+    // }
     lottery.bump = bump;
 
 
