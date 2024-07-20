@@ -27,6 +27,10 @@ pub enum LotteryError {
     RoundNotCloseable,
     #[msg("Invalid lottery account")]
     InvalidAccount,
+    #[msg("Signer not user data owner")]
+    NotUserDataOWner,
+    #[msg("Not enough credits")]
+    NotEnoughCredits
 }
 
 // #[error_code]

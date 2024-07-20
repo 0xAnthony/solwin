@@ -235,6 +235,11 @@ pub mod solwin {
     pub fn f_deposit(ctx: Context<FDepositAndMint>, lottery_id: u32, amount: u64) -> Result<()> {
         instructions::f_deposit_and_mint(ctx, lottery_id, amount)
     }
+
+    // @todo add batch take_ticket
+    pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::f_take_ticket(ctx, lottery_id, round_id)
+    }
     // pub fn buy_ticket(ctx: Context<BuyTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
     //     instructions::buy_ticket(ctx, lottery_id, round_id)
     // }

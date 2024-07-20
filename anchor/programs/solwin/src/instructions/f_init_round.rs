@@ -12,6 +12,8 @@ use anchor_lang::prelude::*;
 use crate::constants::{ MASTER_LOTTERY_SEED, LOTTERY_SEED, ROUND_SEED};
 use crate::instructions::f_init_lottery::FLottery;
 use crate::instructions::f_init_solwin::FMasterLottery;
+// use crate::instructions::f_init_round::FRoundStatus;
+
 
 /*
  * At the moment consider:

@@ -59,6 +59,7 @@ pub fn f_deposit_and_mint(ctx: Context<FDepositAndMint>, lottery_id: u32, amount
     // adding credits eq to in-game SOL
     let user_data = &mut ctx.accounts.user_data;
     user_data.credits += amount;
+    user_data.owner = *ctx.accounts.signer.key;
 
     // vault.balance += amount;
     msg!("Deposited {} lamports into the vault", amount);
@@ -85,7 +86,7 @@ pub struct FDepositAndMint<'info> {
     #[account( 
         init_if_needed,
         payer = user,
-        space = 8 + 8 + 8,
+        space = 8 + 8 + 8 + 32,
         seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
         bump)]
     pub user_data: Account<'info, UserData>,
@@ -118,6 +119,6 @@ pub struct FDepositAndMint<'info> {
 pub struct UserData {
     pub credits: u64,
     pub rewards: u64,
-
+    pub owner: Pubkey,
 }
 
