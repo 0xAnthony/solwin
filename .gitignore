@@ -6,8 +6,6 @@
 
 /anchor/target
 
-test-ledger/
-
 # dependencies
 /node_modules
 /.pnp
