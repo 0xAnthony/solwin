@@ -32,7 +32,7 @@ use helpers::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("5AedBpGJrFqiKRvyFu4HwARH5V8AfD9ZxxSSs3mRDWFb");
+declare_id!("7HfEwD9xWd2hTAjAM8BYXRoSEAWruikvDqibLu63DkbD");
 
 #[program]
 pub mod solwin {
@@ -236,6 +236,9 @@ pub mod solwin {
         instructions::f_deposit_and_mint(ctx, lottery_id, amount)
     }
 
+    pub fn f_withdraw(ctx: Context<FBurnAndWithdraw>, lottery_id: u32, amount: u64) -> Result<()> {
+        instructions::f_burn_and_withdraw(ctx, lottery_id, amount)
+    }
     // @todo add batch take_ticket
     pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
         instructions::f_take_ticket(ctx, lottery_id, round_id)

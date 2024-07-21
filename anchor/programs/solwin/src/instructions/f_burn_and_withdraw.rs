@@ -12,14 +12,19 @@ use {
 // use spl_token_lending::state::Reserve;
 // use anchor_lang::system_program;
 use crate::state::{ FVault};
-use crate::constants::{TOKEN_MINT_SEED, VAULT_SEED};
-use crate::instructions::f_deposit_and_withdraw::{UserData};
+use crate::constants::{TOKEN_MINT_SEED, VAULT_SEED, USER_SEED};
+use crate::instructions::f_deposit_and_mint::{UserData};
+use crate::instructions::f_init_lottery::{FLottery};
 
 
 
-pub fn f_burn_and_withdraw(ctx: Context<FBurnAndWithdraw>, amount: u64) -> Result<()> {
+
+pub fn f_burn_and_withdraw(ctx: Context<FBurnAndWithdraw>, lottery_id: u32, amount: u64) -> Result<()> {
 
     // @todo add balance & account check!!
+
+    // CHECK lottery.id match param !!!!!!!!!!!!!!!
+    // and match vault => lottery id
 
 
     let user_data = &mut ctx.accounts.user_data;
@@ -66,6 +71,12 @@ pub fn f_burn_and_withdraw(ctx: Context<FBurnAndWithdraw>, amount: u64) -> Resul
     
 #[derive(Accounts)]
 pub struct FBurnAndWithdraw<'info> {
+    #[account(
+        mut,
+        // seeds = [LOTTERY_SEED, &lottery.id.to_le_bytes()],
+        // bump = lottery.bump // Vérifie le bump stocké
+    )]
+    pub lottery: Account<'info, FLottery>,
     // Vault
     #[account(mut,
         seeds = [VAULT_SEED, &lottery.id.to_le_bytes()], bump
@@ -82,7 +93,9 @@ pub struct FBurnAndWithdraw<'info> {
         seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
         bump)]
     pub user_data: Account<'info, UserData>,
-
+    // duplicate !!
+    #[account(mut)]
+    pub signer: Signer<'info>,
     // Token
     #[account(
         mut,

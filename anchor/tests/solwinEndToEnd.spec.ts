@@ -29,6 +29,7 @@ import {
 // import { describe, it } from "node:test";
 // import { Console } from "console";
 import { jest } from "@jest/globals";
+// import { describe, it } from "node:test";
 // import { describe, it } from ""
 // import { describe, it } from "node:test";
 
@@ -278,6 +279,16 @@ describe("Initializing Lottery", () => {
     let lotteryData = await program.account.fLottery.fetch(lotteryPda);
     console.log("lottery Pda data after initialization: ", lotteryData);
 
+    let vaultInfo = await program.provider.connection.getAccountInfo(vaultPda);
+    if (vaultInfo) {
+      console.log(`vault Pda found:`);
+      let vaultData = await program.account.fVault.fetch(vaultPda);
+      console.log(`vault info: `, vaultInfo);
+      console.log(`vault data: `, vaultData);
+    } else {
+      console.log("vault Pda not found. something wrong...");
+    }
+
     expect(lotteryData.id).toEqual(newLotteryId);
     expect(lotteryData.lastRoundId.toString()).toEqual("0");
     expect(lotteryData.ticketPrice.toString()).toEqual(TICKET_PRICE.toString());
@@ -335,6 +346,215 @@ describe("Initializing Lottery", () => {
     expect(roundData.ticketPrice.toString()).toEqual(TICKET_PRICE.toString());
     const roundStatus = Object.keys(roundData.status)[0];
     expect(roundStatus).toEqual("open");
+  });
+});
+
+describe("Lottery: Deposit and Withdraw", () => {
+  it("should deposit SOL, mint token to user and update credits", async () => {
+    let vaultData;
+    let vaultInfo = await program.provider.connection.getAccountInfo(vaultPda);
+    if (vaultInfo) {
+      console.log(`vault Pda found:`);
+      vaultData = await program.account.fVault.fetch(vaultPda);
+      console.log(`vault info: `, vaultInfo);
+      console.log(`vault data: `, vaultData);
+    } else {
+      console.log("vault Pda not found. something wrong... Test will fail");
+    }
+
+    let vaultBalanceBeforeDeposit = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: BEFORE DEPOSIT: ",
+      vaultBalanceBeforeDeposit.toString()
+    );
+
+    const destination = await anchor.utils.token.associatedAddress({
+      mint: mintAccount,
+      owner: owner.publicKey, //payer,
+    });
+
+    let initialBalance: number | null;
+    try {
+      const balance = await program.provider.connection.getTokenAccountBalance(
+        destination
+      );
+      initialBalance = balance.value.uiAmount;
+    } catch {
+      // Token account not yet initiated has 0 balance
+      initialBalance = 0;
+    }
+    console.log("token INIT balance of owner", initialBalance);
+
+    const solAmount = 0.5;
+    const amountToDeposit = new BN(solAmount * 10 ** 9);
+
+    const USER_SEED = "user31";
+    const [userDataPda, userDataBump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(USER_SEED),
+          newLotteryID.toArrayLike(Buffer, "le", 4),
+          owner.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
+    const txHash = await program.methods
+      .fDeposit(newLotteryID, amountToDeposit)
+      .accounts({
+        lottery: lotteryPda,
+        vault: vaultPda,
+        user: owner.publicKey,
+        user_data: userDataPda,
+        signer: owner.publicKey,
+        //   systemProgram: anchor.web3.SystemProgram.programId,
+        mint: mintAccount,
+        payer_mint_ata: destination,
+        payer: owner.publicKey,
+        rent: web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: web3.SystemProgram.programId,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+      } as any)
+      .signers([owner]) //user
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 500_000,
+        }),
+      ])
+      .rpc();
+
+    // vaultAccount = await program.account.vault.fetch(vaultPda);
+    // console.log("Vault balance:", vaultAccount.balance.toString());
+    let vaultBalanceAfterDeposit = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: AFTER DEPOSIT: ",
+      vaultBalanceAfterDeposit.toString()
+    );
+    let difFromDeposit = vaultBalanceAfterDeposit - vaultBalanceBeforeDeposit;
+    console.log("Dif from deposit: ", difFromDeposit.toString());
+    expect(difFromDeposit.toString()).toBe(amountToDeposit.toString());
+
+    await program.provider.connection.confirmTransaction(txHash);
+    console.log(`  https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
+
+    // Token
+
+    const postBalance = (
+      await program.provider.connection.getTokenAccountBalance(destination)
+    ).value.uiAmount;
+    console.log("recap initbalance:", initialBalance);
+    console.log("recap amountToDeposit: ", solAmount);
+    console.log("recap postbalance: ", postBalance);
+    assert.equal(
+      initialBalance + solAmount,
+      postBalance,
+      "Compare balances, it must be equal"
+    );
+  });
+
+  it("should withdraw SOL, burn token and decrease credits", async () => {
+    const solAmount = 0.5;
+    const amountToDeposit = new BN(solAmount * 10 ** 9); // amount in lamports
+    const withdrawSolAmount = 0.25;
+    const amountToWithdraw = new BN(withdrawSolAmount * 10 ** 9); // amount in lamports
+    // const [vaultPda, vaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
+    //   [Buffer.from("vault22")],
+    //   program.programId
+    // );
+    let vaultData;
+    let vaultInfo = await program.provider.connection.getAccountInfo(vaultPda);
+    if (vaultInfo) {
+      console.log(`vault Pda found:`);
+      vaultData = await program.account.fVault.fetch(vaultPda);
+      console.log(`vault info: `, vaultInfo);
+      console.log(`vault data: `, vaultData);
+    } else {
+      console.log("vault Pda not found. something wrong... Test will fail");
+    }
+
+    let vaultBalanceBeforeWithdraw = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: BEFORE WITHDRAWAL: ",
+      vaultBalanceBeforeWithdraw.toString()
+    );
+
+    const origin = await anchor.utils.token.associatedAddress({
+      mint: mintAccount,
+      owner: owner.publicKey, //payer,
+    });
+
+    let initialBalance: number | null;
+
+    try {
+      const balance = await program.provider.connection.getTokenAccountBalance(
+        origin
+      );
+      initialBalance = balance.value.uiAmount;
+    } catch {
+      // Token account not yet initiated has 0 balance
+      initialBalance = 0;
+    }
+    console.log("token balance of owner", initialBalance);
+
+    const USER_SEED = "user31";
+    const [userDataPda, userDataBump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(USER_SEED),
+          newLotteryID.toArrayLike(Buffer, "le", 4),
+          owner.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
+    const txHash = await program.methods
+      .fWithdraw(newLotteryID, amountToWithdraw)
+      .accounts({
+        lottery: lotteryPda,
+        vault: vaultPda,
+        user: owner.publicKey,
+        user_data: userDataPda,
+        //   systemProgram: anchor.web3.SystemProgram.programId,
+        mint: mintAccount,
+        payer_mint_ata: origin,
+        payer: owner.publicKey,
+        rent: web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: web3.SystemProgram.programId,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+      } as any)
+      .signers([owner]) //user
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 500_000,
+        }),
+      ])
+      .rpc();
+
+    let vaultAccount = await program.account.fVault.fetch(vaultPda);
+    // console.log("Vault balance:", vaultAccount.balance.toString());
+    let vaultBalanceAfterWithdraw = await getBalance(provider, vaultPda);
+    console.log(
+      "Vault balance: AFTER WITHDRAW: ",
+      vaultBalanceAfterWithdraw.toString()
+    );
+    let difFromWithdraw =
+      vaultBalanceBeforeWithdraw - vaultBalanceAfterWithdraw;
+    expect(difFromWithdraw.toString()).toBe(amountToWithdraw.toString());
+
+    await program.provider.connection.confirmTransaction(txHash);
+    console.log(`  https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
+
+    // token burned
+    const postBalance = (
+      await program.provider.connection.getTokenAccountBalance(origin)
+    ).value.uiAmount;
+    assert.equal(
+      initialBalance - withdrawSolAmount,
+      postBalance,
+      "Compare balances after burning, it must be equal"
+    );
   });
 });
 
