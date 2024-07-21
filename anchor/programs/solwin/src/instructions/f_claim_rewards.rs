@@ -18,7 +18,9 @@ use crate::errors::RewardError;
 use crate::instructions::f_init_lottery::{FLottery};
 
 
-
+// RENAME THIS FOR ACTION REWARDS (closing round...)
+// reward of lottery => get with ticket winning
+// all other reward with user_data.rewards
 pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
 
     // @todo add balance & account check!!

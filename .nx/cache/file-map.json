@@ -72,44 +72,44 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "nx.json",
-        "hash": "14557014133078539282"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
-      },
-      {
-        "file": "README.md",
-        "hash": "11743324811412479332"
-      },
-      {
-        "file": "vercel.json",
-        "hash": "1598408354266276258"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": "LICENSE",
-        "hash": "3886324858050511294"
+        "file": "package-lock.json",
+        "hash": "2818319484801055047"
       },
       {
         "file": ".gitignore",
         "hash": "5724493968319023548"
       },
       {
-        "file": "package-lock.json",
-        "hash": "2818319484801055047"
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "package.json",
+        "hash": "12767240414819977159"
       },
       {
         "file": "jest.config.ts",
         "hash": "3494843969422251966"
       },
       {
-        "file": "package.json",
-        "hash": "12767240414819977159"
+        "file": "nx.json",
+        "hash": "14557014133078539282"
+      },
+      {
+        "file": "LICENSE",
+        "hash": "3886324858050511294"
+      },
+      {
+        "file": "README.md",
+        "hash": "11743324811412479332"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "1598408354266276258"
       }
     ],
     "projectFileMap": {
@@ -386,7 +386,7 @@
         },
         {
           "file": "anchor/Anchor.toml",
-          "hash": "18005005758651169949"
+          "hash": "13880246380154303076"
         },
         {
           "file": "anchor/Cargo.lock",
@@ -432,7 +432,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/constants.rs",
-          "hash": "18409506520452731300"
+          "hash": "8335814939671090560"
         },
         {
           "file": "anchor/programs/solwin/src/errors.rs",
@@ -488,7 +488,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_claim_rewards.rs",
-          "hash": "12868402995350215764"
+          "hash": "10630556867303278358"
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_close_round.rs",
@@ -500,7 +500,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_init_lottery.rs",
-          "hash": "7813550563102905129"
+          "hash": "7895847903151313744"
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_init_round.rs",
@@ -508,7 +508,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_init_solwin.rs",
-          "hash": "7818556212602757199"
+          "hash": "12772074221699291800"
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_take_ticket.rs",
@@ -540,7 +540,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/lib.rs",
-          "hash": "1542878041244352984"
+          "hash": "18038241345911344146"
         },
         {
           "file": "anchor/programs/solwin/src/state/fvault.rs",
@@ -552,7 +552,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/state/master_lottery.rs",
-          "hash": "3244421341483603138"
+          "hash": "1119618867381922713"
         },
         {
           "file": "anchor/programs/solwin/src/state/mod.rs",
@@ -609,7 +609,7 @@
         },
         {
           "file": "anchor/tests/solwinLottery.spec.ts",
-          "hash": "16439356449891655843",
+          "hash": "15048257946391854977",
           "deps": [
             "npm:@coral-xyz/anchor",
             "npm:assert",
@@ -673,6 +673,43 @@
         {
           "file": "anchor/programs/solwin/src/instructions/f_claim_lottery_rewards.rs",
           "hash": "15140408072401323176"
+        },
+        {
+          "file": "anchor/tests/solwinEndToEnd.spec.ts",
+          "hash": "14431212955135507617",
+          "deps": [
+            "npm:@coral-xyz/anchor",
+            "npm:@solana/spl-token",
+            "npm:assert",
+            "npm:bn.js",
+            "npm:@solana/web3.js",
+            "npm:dotenv",
+            "npm:@jest/globals"
+          ]
+        },
+        {
+          "file": "anchor/.anchor/program-logs/6u6XLjj8vMfdgB5eJUDvfr1fXvWSEk6gicmfcmb1Ut2t.solwin.log",
+          "hash": "9377369963678120358"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/5bZy5UvibNjRs1LfkRgQurA6guNJwzc2T4Ft45ev3wWc.solwin.log",
+          "hash": "4719055092199990813"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/DPZxTLDC7oW7kHa9qwr82KVmaciFqZXwxZmEJUrG1AmP.solwin.log",
+          "hash": "4587302316046487914"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/GQQnQ66RQVnp2Sg4uhqnh27pQhwgaGQtAsEpEALnbfGR.solwin.log",
+          "hash": "3584003883177428743"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/5iVLk1wSPjmK96kjLBQpjzWR4mWELWjvNeQzPNJSddPq.solwin.log",
+          "hash": "11755178436329987977"
+        },
+        {
+          "file": "anchor/.anchor/program-logs/5AedBpGJrFqiKRvyFu4HwARH5V8AfD9ZxxSSs3mRDWFb.solwin.log",
+          "hash": "4489631897455686913"
         }
       ]
     }

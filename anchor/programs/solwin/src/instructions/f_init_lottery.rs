@@ -69,8 +69,8 @@ pub fn f_init_lottery(ctx: Context<FInitLottery>, ticket_price: u64, round_durat
 pub struct FInitLottery<'info> {
     #[account(
         mut,
-        // seeds = [MASTER_LOTTERY_SEED],
-        // bump,
+        seeds = [MASTER_LOTTERY_SEED],
+        bump,
     )]
     pub master_lottery: Account<'info, FMasterLottery>,
     #[account(
