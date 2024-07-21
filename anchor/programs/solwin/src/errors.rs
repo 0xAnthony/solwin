@@ -37,9 +37,15 @@ pub enum LotteryError {
     #[msg("Signer not user data owner")]
     NotUserDataOWner,
     #[msg("Not enough credits")]
-    NotEnoughCredits
+    NotEnoughCredits,
     #[msg("Winner Data Not Found")]
-    WinnerDataNotFound
+    WinnerDataNotFound,
+    #[msg("Round Creation Failed")]
+    RoundCreationFailed,
+    #[msg("Winner Ticket Not Found")]
+    WinnerTicketNotFound,
+    // #[msg("Round Creation Failed")]
+    // RoundCreationFailed,
 }
 
 // #[error_code]

@@ -19,19 +19,33 @@ use crate::instructions::f_init_lottery::{FLottery};
 
 
 
-pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
+pub fn f_claim_lottery_rewards(ctx: Context<ClaimLotteryRewards>) -> Result<()> {
 
     // @todo add balance & account check!!
 
+    // @todo simplify => round winner pubkey and reward
+    // ticket used only to check if owner of ticket is the winner
+    // round with winner ticket id + ticket id + proof owner of the ticket
     let user = &ctx.accounts.user;
     let user_data = &mut ctx.accounts.user_data;
+    let round = &mut ctx.accounts.round;
+     let ticket = &mut ctx.accounts.user_ticket;
+    // RENAME : id of ticket!!!!
+    let round_winner_ticket_id = round.winner_id
+    let ticket_id = ticket.id;
 
+    if ticket_id != round_winner_ticket_id {
+        return err!(RewardError::NotWinnerTicket);
+    }
+    if ticket_id.authority != *user.key {
+        return err!(RewardError::NotTicketOWner);
+    }
     if user_data.owner != *user.key {
         return err!(RewardError::NotUserDataOWner);
     }
     // case of user who had bought token and not or partially deposited SOL
-    let reward_amount = user_data.rewards;
-    user_data.rewards = 0;
+    let reward_amount = round.reward;
+    ticket.claimed = true;
 
     // MOCK LENDING INTEREST, looking for solution to connect to protocols on devnet
 
@@ -60,7 +74,7 @@ pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
 
     
 #[derive(Accounts)]
-pub struct ClaimRewards<'info> {
+pub struct ClaimLotteryRewards<'info> {
     // Vault
     // #[account(mut,
     //     seeds = [VAULT_SEED, &lottery.id.to_le_bytes()], bump
@@ -69,6 +83,10 @@ pub struct ClaimRewards<'info> {
     // @todo check seed!! as in take_ticket & withdraw too!
     #[account(mut)]
     pub lottery: Account<'info, FLottery>,
+    #[account(mut)]
+    pub round: Account<'info, FRound>,
+    #[account(mut)]
+    pub user_ticket: Account<'info, FTicket>,
     #[account(mut)]
     pub user: Signer<'info>,
     // pub system_program: Program<'info, System>,

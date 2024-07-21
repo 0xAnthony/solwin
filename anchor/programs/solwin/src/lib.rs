@@ -240,6 +240,14 @@ pub mod solwin {
     pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
         instructions::f_take_ticket(ctx, lottery_id, round_id)
     }
+
+    pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::f_close_round(ctx, lottery_id, round_id)
+    }
+
+    pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
+        instructions::f_claim_rewards(ctx)
+    }
     // pub fn buy_ticket(ctx: Context<BuyTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
     //     instructions::buy_ticket(ctx, lottery_id, round_id)
     // }

@@ -87,7 +87,9 @@ pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -
     ticket.lottery_id = lottery_id;
     ticket.round_id = round_id;
     ticket.authority = buyer.key();
-
+    ticket.winner_reward = 0;
+    ticket.claimed = false;
+    
     msg!("Ticket id: {}", ticket.id);
     msg!("Ticket authority: {}", ticket.authority);
 
@@ -103,7 +105,7 @@ pub struct TakeTicket<'info> {
     #[account(
         init,
         payer = buyer,
-        space = 8 + 4 + 4 + 4 + 32,
+        space = 8 + 4 + 4 + 4 + 32 + 8 + 1,
         seeds = [TICKET_SEED, &(round.last_ticket_id + 1).to_le_bytes()],    //buyer.key().as_ref()],
         bump,
     )]
@@ -122,4 +124,6 @@ pub struct FTicket {
     pub lottery_id: u32,
     pub round_id: u32,
     pub authority: Pubkey,
+    pub winner_reward: u64,
+    pub claimed: bool,
 }

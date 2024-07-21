@@ -83,6 +83,7 @@ pub struct FDepositAndMint<'info> {
     #[account(mut)]
     pub user: Signer<'info>, // repeat payer
     // pub system_program: Program<'info, System>,
+    
     #[account( 
         init_if_needed,
         payer = user,
@@ -90,6 +91,13 @@ pub struct FDepositAndMint<'info> {
         seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
         bump)]
     pub user_data: Account<'info, UserData>,
+    // #[account( 
+    //     init_if_needed,
+    //     payer = user,
+    //     space = 8 + 8 + 8 + 32,
+    //     seeds = [USER_KEY_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
+    //     bump)]
+    // pub user_key_id: Account<'info, UserKeyId>,
     #[account(mut)]
     pub signer: Signer<'info>,
     // Token
