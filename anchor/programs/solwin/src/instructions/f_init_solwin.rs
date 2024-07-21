@@ -11,14 +11,14 @@ use anchor_spl::{
         token::{Mint, Token},
 };
 use crate::state::{InitTokenParams, FVault};
-use crate::constants::{TOKEN_MINT_SEED, VAULT_SEED};
+use crate::constants::{TOKEN_MINT_SEED, MASTER_LOTTERY_SEED, VAULT_SEED};
 // use solana_program::program_pack::Pack;
 // use spl_token_lending::state::Reserve;
 use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 // use anchor_lang::system_program;
 // use crate::state::{ Vault};
 // use crate::constants::{VAULT_SEED};
-use crate::constants::{MASTER_LOTTERY_SEED};
+// use crate::constants::{MASTER_LOTTERY_SEED};
 
 
 // @todo rename : initialize

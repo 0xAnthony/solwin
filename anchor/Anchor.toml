@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-solwin = "6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5"
+solwin = "5AedBpGJrFqiKRvyFu4HwARH5V8AfD9ZxxSSs3mRDWFb"
 
 [programs.localnet]
 solwin = "6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5"
