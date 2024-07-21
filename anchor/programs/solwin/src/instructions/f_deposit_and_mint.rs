@@ -40,21 +40,21 @@ pub fn f_deposit_and_mint(ctx: Context<FDepositAndMint>, lottery_id: u32, amount
     system_program::transfer(cpi_context, amount)?;
 
     // Mint equiv amount of token
-      let seeds = &[TOKEN_MINT_SEED, &[ctx.bumps.mint]]; //"mint".as_bytes()
-        let signer = [&seeds[..]];
+    let seeds = &[TOKEN_MINT_SEED, &[ctx.bumps.mint]]; //"mint".as_bytes()
+    let signer = [&seeds[..]];
 
-        mint_to(
-            CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
-                MintTo {
-                    authority: ctx.accounts.mint.to_account_info(),
-                    to: ctx.accounts.payer_mint_ata.to_account_info(),//destination
-                    mint: ctx.accounts.mint.to_account_info(),
-                },
-                &signer,
-            ),
-            amount,
-        )?;
+    mint_to(
+        CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            MintTo {
+                authority: ctx.accounts.mint.to_account_info(),
+                to: ctx.accounts.payer_mint_ata.to_account_info(),//destination
+                mint: ctx.accounts.mint.to_account_info(),
+            },
+            &signer,
+        ),
+        amount,
+    )?;
 
     // adding credits eq to in-game SOL
     let user_data = &mut ctx.accounts.user_data;

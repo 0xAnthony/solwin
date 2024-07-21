@@ -13,6 +13,13 @@ pub enum XorshiftError {
 
 }
 
+// !!! duplicate !!!
+#[error_code]
+pub enum RewardError {
+    #[msg("Signer not user data owner")]
+    NotUserDataOWner,
+}
+
 #[error_code]
 pub enum LotteryError {
     #[msg("Winner already exists")]

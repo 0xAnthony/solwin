@@ -72,12 +72,16 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
+        "file": "nx.json",
+        "hash": "14557014133078539282"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
+        "file": "LICENSE",
+        "hash": "3886324858050511294"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "1598408354266276258"
       },
       {
         "file": "README.md",
@@ -88,16 +92,16 @@
         "hash": "3494843969422251966"
       },
       {
-        "file": "vercel.json",
-        "hash": "1598408354266276258"
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
       },
       {
         "file": "package-lock.json",
         "hash": "2818319484801055047"
-      },
-      {
-        "file": "LICENSE",
-        "hash": "3886324858050511294"
       },
       {
         "file": ".gitignore",
@@ -106,17 +110,13 @@
       {
         "file": "package.json",
         "hash": "12767240414819977159"
-      },
-      {
-        "file": "nx.json",
-        "hash": "14557014133078539282"
       }
     ],
     "projectFileMap": {
       "anchor": [
         {
           "file": "anchor/.env.example",
-          "hash": "7500177271660862441"
+          "hash": "4109499536946884248"
         },
         {
           "file": "anchor/.eslintrc.json",
@@ -182,7 +182,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/errors.rs",
-          "hash": "5678764839796197206"
+          "hash": "6670256245503655813"
         },
         {
           "file": "anchor/programs/solwin/src/helpers/mod.rs",
@@ -258,7 +258,7 @@
         },
         {
           "file": "anchor/programs/solwin/src/instructions/mod.rs",
-          "hash": "9632168922667541133"
+          "hash": "15108979359339608426"
         },
         {
           "file": "anchor/programs/solwin/src/instructions/withdraw.rs",
@@ -398,11 +398,23 @@
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_deposit_and_mint.rs",
-          "hash": "5911511058062420777"
+          "hash": "12890985972689217797"
         },
         {
           "file": "anchor/programs/solwin/src/instructions/f_take_ticket.rs",
           "hash": "8745909689359813978"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/f_close_round.rs",
+          "hash": "639872634682765118"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/f_claim_rewards.rs",
+          "hash": "17624128733618185789"
+        },
+        {
+          "file": "anchor/programs/solwin/src/instructions/f_burn_and_withdraw.rs",
+          "hash": "6941397308323371234"
         }
       ],
       "web": [
