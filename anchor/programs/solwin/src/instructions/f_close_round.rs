@@ -15,7 +15,7 @@ use anchor_lang::{
 use crate::constants::{ LOTTERY_SEED, ROUND_SEED};
 use crate::instructions::f_init_lottery::FLottery;
 use crate::errors::LotteryError;
-use crate::instructions::f_init_round::{FRound, FRoundStatus}
+use crate::instructions::f_init_round::{f_init_round, FInitRound, FRound, FRoundStatus}
 use crate::instructions::f_deposit_and_withdraw::{UserData};
 // not used at the moment
 // use crate::helpers::xorshift::generate_xorshift64_f64;
@@ -119,7 +119,18 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
 
     winner_user_data.reward += lottery.ticket_price * winner_reward_ratio; 
 
+    // INIT A NEW ROUND
 
+    let init_round_context = FInitRound {
+        round: ctx.accounts.round.clone(),
+        lottery: ctx.accounts.lottery.clone(),
+        // !! ?? remove ? or other solution
+        authority: ctx.accounts.authority.clone(),
+        system_program: ctx.accounts.system_program.clone(),
+    };
+
+    // Initialiser un nouveau round
+    f_init_round(init_round_context)?;
 
     Ok(())
 }
@@ -137,6 +148,9 @@ pub struct FCloseRound<'info> {
         seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
         bump)]
     pub closer_data: Account<'info, UserData>,
+    // SOhuld'nt be a user !!! => remove
+    #[account(mut)]
+    pub authority: Signer<'info>,
     pub signer: Signer<'info>,
 
 }

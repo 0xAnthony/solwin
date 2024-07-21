@@ -39,7 +39,7 @@ pub enum LotteryError {
     #[msg("Not enough credits")]
     NotEnoughCredits
     #[msg("Winner Data Not Found")]
-    UserDataNotFound
+    WinnerDataNotFound
 }
 
 // #[error_code]

@@ -73,6 +73,8 @@ pub struct FInitRound<'info> {
         // bump,
     )]
     pub lottery: Account<'info, FLottery>,
+
+    // !! ?? risk to block close to inti a new round
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
