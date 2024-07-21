@@ -13,22 +13,31 @@ use anchor_lang::{
 
 // use::crate::state::{Lottery, Round};
 use crate::constants::{ LOTTERY_SEED, ROUND_SEED};
-use crate::instructions::init_lottery::Lottery;
+use crate::instructions::f_init_lottery::FLottery;
 use crate::errors::LotteryError;
-use crate::instructions::init_round::Round;
-use crate::instructions::init_round::RoundStatus;
-use crate::helpers::xorshift::generate_xorshift64_f64;
+use crate::instructions::f_init_round::{FRound, FRoundStatus}
+use crate::instructions::f_deposit_and_withdraw::{UserData};
+// not used at the moment
+// use crate::helpers::xorshift::generate_xorshift64_f64;
 
 
-
-pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
+// caller of the function should be a user to get rewards
+pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
     let clock = Clock::get()?;
     
+    let program_id = ctx.program_id;
+
     let lottery = &mut ctx.accounts.lottery;
     let round = &mut ctx.accounts.round;
 
     let mut round_clone = ctx.accounts.round.clone();
+    let signer = &ctx.accounts.signer;
 
+    let closer_data.reward = &mut ctx.accounts.user_data;
+
+    if closer_data.reward.owner != *signer.key {
+        return err!(LotteryError::NotUserDataOWner);
+    }
     // check id of lottery and round match the one of pdas:
     if lottery.id != lottery_id {
         return err!(LotteryError::InvalidLotteryId);
@@ -38,8 +47,8 @@ pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> 
     }
 
     // check round status is Open
-    if round_clone.status != RoundStatus::Open {
-        return err!(LotteryError::RoundNotOpen);
+    if round_clone.status != FRoundStatus::Open {
+        return err!(LotteryError::FRoundNotOpen);
     }
 
     // check timestamp > min_close_time
@@ -47,7 +56,18 @@ pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> 
         return err!(LotteryError::RoundNotCloseable);
     }
 
-    // calcultate reward of closer according to close_slot
+    // TEMP (till looking for solution to connect to lending protocol)
+    // MOCKING these interest by minting token
+    // interest => reward => arbitrary temporary choice: 1/2 ticket price
+    let closer_reward_ratio = 1 / 4;
+    let winner_reward_ratio = 3 / 4;
+
+    closer_data.reward += lottery.ticket_price * closer_reward_ratio;
+
+    // @todo ADD REWARD COMPUTATION OF CLOSER:
+    // max reward at target (round start + duration)
+    // min boosted reward at target +- 1/2 close_slot (ponder side needed, ie ahead or late in round cycle)
+    // then only 5% if out of the slot
     // if clock.unix_timestamp < round_clone.min_close_time || clock.unix_timestamp > round_clone.max_close_time {
     // }
 
@@ -75,29 +95,50 @@ pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> 
 
     // ADD REWARD LOGIC (get fees from vault, transfert to user vault, etc)
 
-
+    // CASE of USING sb VRF in 2 steps (request-reveal) : handle a failing request
+    // SHOULD HAVE 2 functions when VRF ok (one for the 'callback')
     // display round status, round & lottery id, winner_id,// reward
     match round_clone.winner_id {
         Some(winner_id) => {
             msg!("Round closed with id: {}, winner id: {}", round_clone.id, winner_id);
         },
         None => {
-            msg!("Round closed with id: {}, no winner yet", round_clone.id);
+            msg!("Round closed with id: {}, no winner, error requesting vrf", round_clone.id);
      
         }
     }
+
+
+    let winner_seeds = &[USER_SEED, &winner_id.to_le_bytes()];
+    let (winner_data_address, _bump) = Pubkey::find_program_address(winner_seeds, &program_id);
+    let winner_user_data = Account::<UserData>::try_from(&winner_user_data_address)?;
+
+    if winner_user_data.is_none() {
+        return err!(LotteryError::WinnerDataNotFound);
+    }
+
+    winner_user_data.reward += lottery.ticket_price * winner_reward_ratio; 
+
+
 
     Ok(())
 }
 
 
 #[derive(Accounts)]
-pub struct CloseRound<'info> {
+pub struct FCloseRound<'info> {
     #[account(mut)]
-    pub lottery: Account<'info, Lottery>,
+    pub lottery: Account<'info, FLottery>,
     #[account(mut)]
-    pub round: Account<'info, Round>,
+    pub round: Account<'info, FRound>,
     pub system_program: Program<'info, System>,
+    #[account( 
+        mut,
+        seeds = [USER_SEED, &lottery.id.to_le_bytes(), signer.key().as_ref()], 
+        bump)]
+    pub closer_data: Account<'info, UserData>,
+    pub signer: Signer<'info>,
+
 }
 
 

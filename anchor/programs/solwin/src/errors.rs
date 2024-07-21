@@ -38,6 +38,8 @@ pub enum LotteryError {
     NotUserDataOWner,
     #[msg("Not enough credits")]
     NotEnoughCredits
+    #[msg("Winner Data Not Found")]
+    UserDataNotFound
 }
 
 // #[error_code]
