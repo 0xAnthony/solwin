@@ -245,8 +245,8 @@ pub mod solwin {
         instructions::f_close_round(ctx, lottery_id, round_id)
     }
 
-    pub fn f_claim_reward(ctx: Context<ClaimRewards>) -> Result<()> {
-        instructions::f_claim_reward(ctx)
+    pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
+        instructions::f_claim_rewards(ctx)
     }
     // pub fn buy_ticket(ctx: Context<BuyTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
     //     instructions::buy_ticket(ctx, lottery_id, round_id)

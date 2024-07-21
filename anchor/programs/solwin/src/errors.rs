@@ -42,6 +42,10 @@ pub enum LotteryError {
     WinnerDataNotFound,
     #[msg("Round Creation Failed")]
     RoundCreationFailed,
+    #[msg("Winner Ticket Not Found")]
+    WinnerTicketNotFound,
+    // #[msg("Round Creation Failed")]
+    // RoundCreationFailed,
 }
 
 // #[error_code]

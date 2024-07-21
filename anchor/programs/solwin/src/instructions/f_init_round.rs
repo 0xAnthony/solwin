@@ -14,7 +14,7 @@ use crate::instructions::f_init_lottery::FLottery;
 use crate::instructions::f_init_solwin::FMasterLottery;
 // use crate::instructions::f_init_round::FRoundStatus;
 
-
+// @todo make it callable only once by lottery 
 /*
  * At the moment consider:
  * MasterLottery -> x Lottery -> one Vault/strat + n rounds
@@ -56,7 +56,7 @@ pub struct FInitRound<'info> {
     #[account(
         init,
         payer = authority,
-        space = 8 + 4 + 32 + 4 + 8 + 4 + 8 + 8 + 8 + 8 + 4 + 32,
+        space = 8 + 4 + 32 + 4 + 8 + 4 + 8 + 8 + 8 + 8 + 4 + 32 + 8,
         seeds = [ROUND_SEED, &(lottery.last_round_id + 1).to_le_bytes()],
         bump,
     )]
@@ -92,9 +92,11 @@ pub struct FRound {
     pub min_close_time: i64,
     pub max_close_time: i64,
     pub status: FRoundStatus,
+    // test
     pub winner_id: Option<u32>, // to be updated when round is closed
     // pub winner_key: Pubkey, // to be updated when round is closed
     // pub last_ticket_id: u32,
+    pub reward: u64,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
