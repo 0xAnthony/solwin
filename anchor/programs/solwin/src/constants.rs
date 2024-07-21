@@ -21,3 +21,4 @@ pub const MASTER_LOTTERY_SEED: &[u8] = b"master_lottery4";
 pub const LOTTERY_SEED: &[u8] = b"lottery4";
 pub const ROUND_SEED: &[u8] = b"round4";
 pub const TICKET_SEED: &[u8] = b"ticket";
+pub const USER_SEED: &[u8] = b"user";
