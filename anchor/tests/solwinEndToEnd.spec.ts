@@ -57,10 +57,13 @@ const program = anchor.workspace.Solwin as Program<Solwin>;
 const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
 
 // CHANGE THE SEED (+1) to test initialization of new accounts
-const MASTER_LOTTERY_SEED = "master_lottery31";
-const LOTTERY_SEED = "lottery31";
-const ROUND_SEED = "round31";
-const VAULT_SEED = "vault31";
+const USER_SEED = "user32";
+
+const MASTER_LOTTERY_SEED = "master_lottery32";
+const LOTTERY_SEED = "lottery32";
+const ROUND_SEED = "round32";
+const VAULT_SEED = "vault32";
+const TICKET_SEED = "ticket32";
 // at the moment only one price: 0.1 SOL
 const TICKET_PRICE = new BN(0.1 * LAMPORTS_PER_SOL);
 // round duration time in seconds (1 day), 10 sec for testing
@@ -84,7 +87,7 @@ const newRoundID = new BN(1); // default: 1
 const initialLastLotteryId = 0;
 
 // token
-const MINT_SEED = "mint31";
+const MINT_SEED = "mint32";
 const METADATA_SEED = "metadata";
 // default metaplex token metadata program
 // https://metaplex-foundation.github.io/metaplex-program-library/docs/token-metadata/index.html#accountProviders.__type.Metadata
@@ -179,15 +182,15 @@ describe("Initializing Lottery", () => {
       .fInitializeSolwin(metadata)
       .accounts({
         user: owner.publicKey,
-        systemProgram: web3.SystemProgram.programId,
-        masterLottery: masterLotteryPda,
+        system_program: web3.SystemProgram.programId,
+        master_lottery: masterLotteryPda,
         metadata: metadataPDA,
         mint: mintAccount,
         payer: owner.publicKey,
         rent: web3.SYSVAR_RENT_PUBKEY, //anchor.web3.SYSVAR_RENT_PUBKEY,
         // payer: owner.publicKey, //payer,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        token_program: anchor.utils.token.TOKEN_PROGRAM_ID,
+        token_metadata_program: TOKEN_METADATA_PROGRAM_ID,
         // systemProgram: web3.SystemProgram.programId, //anchor.web3.SystemProgram.programId,
       } as any)
       .preInstructions([
@@ -257,11 +260,11 @@ describe("Initializing Lottery", () => {
       .fInitializeLottery(TICKET_PRICE, ROUND_DURATION, CLOSE_SLOT)
       .accounts({
         lottery: lotteryPda,
-        masterLottery: masterLotteryPda,
+        master_lottery: masterLotteryPda,
         vault: vaultPda,
         // payer: owner.publicKey,
         authority: owner.publicKey,
-        systemProgram: web3.SystemProgram.programId,
+        system_program: web3.SystemProgram.programId,
         user: owner.publicKey,
       } as any)
       .signers([owner])
@@ -325,7 +328,7 @@ describe("Initializing Lottery", () => {
         round: roundPda,
         lottery: lotteryPda,
         authority: owner.publicKey,
-        systemProgram: SystemProgram.programId,
+        system_program: SystemProgram.programId,
       } as any)
       .rpc();
 
@@ -388,7 +391,6 @@ describe("Lottery: Deposit and Withdraw", () => {
     const solAmount = 0.5;
     const amountToDeposit = new BN(solAmount * 10 ** 9);
 
-    const USER_SEED = "user31";
     const [userDataPda, userDataBump] =
       anchor.web3.PublicKey.findProgramAddressSync(
         [
@@ -398,6 +400,20 @@ describe("Lottery: Deposit and Withdraw", () => {
         ],
         program.programId
       );
+
+    let userDataInfo = await program.provider.connection.getAccountInfo(
+      userDataPda
+    );
+    let userData;
+    if (userDataInfo) {
+      let userData = await program.account.userData.fetch(userDataPda);
+      console.log(
+        "Credits in user data before deposit: ",
+        userData.credits.toString()
+      );
+    } else {
+      console.error("UserDataPda not found. will be initialized during tx..");
+    }
 
     const txHash = await program.methods
       .fDeposit(newLotteryID, amountToDeposit)
@@ -412,9 +428,9 @@ describe("Lottery: Deposit and Withdraw", () => {
         payer_mint_ata: destination,
         payer: owner.publicKey,
         rent: web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+        system_program: web3.SystemProgram.programId,
+        token_program: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associated_token_program: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
       } as any)
       .signers([owner]) //user
       .preInstructions([
@@ -435,7 +451,11 @@ describe("Lottery: Deposit and Withdraw", () => {
     console.log("Dif from deposit: ", difFromDeposit.toString());
     expect(difFromDeposit.toString()).toBe(amountToDeposit.toString());
 
-    await program.provider.connection.confirmTransaction(txHash);
+    try {
+      await program.provider.connection.confirmTransaction(txHash, "finalized");
+    } catch (e) {
+      console.log("Error when initializing Depositing: ", e);
+    }
     console.log(`  https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
 
     // Token
@@ -450,6 +470,12 @@ describe("Lottery: Deposit and Withdraw", () => {
       initialBalance + solAmount,
       postBalance,
       "Compare balances, it must be equal"
+    );
+
+    userData = await program.account.userData.fetch(userDataPda);
+    console.log(
+      "Credits in user data after deposit: ",
+      userData.credits.toString()
     );
   });
 
@@ -495,9 +521,8 @@ describe("Lottery: Deposit and Withdraw", () => {
       // Token account not yet initiated has 0 balance
       initialBalance = 0;
     }
-    console.log("token balance of owner", initialBalance);
+    console.log("token balance of owner BEFORE withdrawal", initialBalance);
 
-    const USER_SEED = "user31";
     const [userDataPda, userDataBump] =
       anchor.web3.PublicKey.findProgramAddressSync(
         [
@@ -507,6 +532,25 @@ describe("Lottery: Deposit and Withdraw", () => {
         ],
         program.programId
       );
+
+    // let userData = await program.account.userData.fetch(userDataPda);
+    // console.log(
+    //   "Credits in user data before withdrawal: ",
+    //   userData.credits.toString()
+    // );
+    let userDataInfo = await program.provider.connection.getAccountInfo(
+      userDataPda
+    );
+    let userData;
+    if (userDataInfo) {
+      let userData = await program.account.userData.fetch(userDataPda);
+      console.log(
+        "Credits in user data before deposit: ",
+        userData.credits.toString()
+      );
+    } else {
+      console.error("UserDataPda not found. will be initialized during tx..");
+    }
 
     const txHash = await program.methods
       .fWithdraw(newLotteryID, amountToWithdraw)
@@ -520,9 +564,9 @@ describe("Lottery: Deposit and Withdraw", () => {
         payer_mint_ata: origin,
         payer: owner.publicKey,
         rent: web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+        system_program: web3.SystemProgram.programId,
+        token_program: anchor.utils.token.TOKEN_PROGRAM_ID,
+        associated_token_program: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
       } as any)
       .signers([owner]) //user
       .preInstructions([
@@ -543,7 +587,11 @@ describe("Lottery: Deposit and Withdraw", () => {
       vaultBalanceBeforeWithdraw - vaultBalanceAfterWithdraw;
     expect(difFromWithdraw.toString()).toBe(amountToWithdraw.toString());
 
-    await program.provider.connection.confirmTransaction(txHash);
+    try {
+      await program.provider.connection.confirmTransaction(txHash, "finalized");
+    } catch (e) {
+      console.log("Error when initializing Depositing: ", e);
+    }
     console.log(`  https://explorer.solana.com/tx/${txHash}?cluster=devnet`);
 
     // token burned
@@ -555,73 +603,115 @@ describe("Lottery: Deposit and Withdraw", () => {
       postBalance,
       "Compare balances after burning, it must be equal"
     );
+
+    try {
+      const balance = await program.provider.connection.getTokenAccountBalance(
+        origin
+      );
+      initialBalance = balance.value.uiAmount;
+    } catch {
+      // Token account not yet initiated has 0 balance
+      initialBalance = 0;
+    }
+    console.log("token balance of owner after withdrawal: ", initialBalance);
+
+    userData = await program.account.userData.fetch(userDataPda);
+    console.log(
+      "Credits in user data after withdrawal: ",
+      userData.credits.toString()
+    );
   });
 });
 
-// describe("Lottery: Buy Ticket", () => {
-//   if (!masterLotteryPda || !lotteryPda || !roundPda) {
-//     console.error("PDAs not initialized, skipping tests");
-//     return;
-//   }
+describe("Lottery: Take Ticket", () => {
+  if (!masterLotteryPda || !lotteryPda || !roundPda) {
+    console.error("!! PDAs not initialized !!, skipping tests");
+    return;
+  }
 
-//   it("Chekcs owner can buy a ticket", async () => {
-//     const roundInfo = await program.provider.connection.getAccountInfo(
-//       roundPda
-//     );
-//     const roundData = await program.account.round.fetch(roundPda);
+  it("Chekcs owner can take a ticket", async () => {
+    const roundInfo = await program.provider.connection.getAccountInfo(
+      roundPda
+    );
+    const roundData = await program.account.fRound.fetch(roundPda);
 
-//     console.log("round info: ", roundInfo);
-//     console.log("round data: ", roundData);
+    console.log("round info: ", roundInfo);
+    console.log("round data: ", roundData);
 
-//     const lastTicketId = roundData.lastTicketId;
-//     const newTicketId = new BN(lastTicketId + 1);
-//     console.log("id of the futur ticket: ", newTicketId.toString());
+    const lastTicketId = roundData.lastTicketId;
+    const newTicketId = new BN(lastTicketId + 1);
+    console.log("id of the future ticket: ", newTicketId.toString());
 
-//     const [ticketPda, ticketBump] = await PublicKey.findProgramAddressSync(
-//       [Buffer.from("ticket"), newTicketId.toArrayLike(Buffer, "le", 4)],
-//       program.programId
-//     );
-//     const ticketInfo = await program.provider.connection.getAccountInfo(
-//       ticketPda
-//     );
+    const [ticketPda, ticketBump] = await PublicKey.findProgramAddressSync(
+      [Buffer.from(TICKET_SEED), newTicketId.toArrayLike(Buffer, "le", 4)],
+      program.programId
+    );
+    const ticketInfo = await program.provider.connection.getAccountInfo(
+      ticketPda
+    );
 
-//     console.log("ticketInfo data BEFORE  buy: ", ticketInfo);
-//     console.log("ticketPda data BEFORE  buy: ", ticketPda);
+    console.log("ticketInfo data BEFORE  taking a ticket: ", ticketInfo);
+    console.log("ticketPda data BEFORE  taking a ticket: ", ticketPda);
 
-//     const txHash = await program.methods
-//       .buyTicket(newLotteryID, newRoundID)
-//       .accounts({
-//         round: roundPda,
-//         lottery: lotteryPda,
-//         ticket: ticketPda,
-//         buyer: owner.publicKey,
-//         systemProgram: SystemProgram.programId,
-//       } as any)
-//       .signers([owner])
-//       .preInstructions([
-//         anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
-//           units: 1_400_000,
-//         }),
-//       ])
-//       .rpc({
-//         skipPreflight: true,
-//       });
+    const [userDataPda, userDataBump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(USER_SEED),
+          newLotteryID.toArrayLike(Buffer, "le", 4),
+          owner.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
 
-//     try {
-//       await program.provider.connection.confirmTransaction(txHash, "finalized");
-//     } catch (e) {
-//       console.log("Error when buying a ticket: ", e);
-//     }
-//     console.log(
-//       `ticket buy tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
-//     );
+    let userData = await program.account.userData.fetch(userDataPda);
+    let creditsBefore = userData.credits.toString();
 
-//     const ticketDataAfterBuy = await program.account.round.fetch(roundPda);
-//     console.log("ticketPda data AFTER  buy: ", ticketDataAfterBuy);
-//     const roundDataAfterBuy = await program.account.round.fetch(roundPda);
-//     console.log("round data: AFTER  buy: ", roundDataAfterBuy);
+    console.log("Credits in user data before taking a ticket: ", creditsBefore);
 
-//     expect(ticketDataAfterBuy.id.toString()).toEqual(newTicketId.toString());
-//     // expect(ticketDataAfterBuy.authority.toString()).toEqual(owner.publicKey);
-//   });
-// });
+    const txHash = await program.methods
+      .fTakeTicket(newLotteryID, newRoundID)
+      .accounts({
+        lottery: lotteryPda,
+        round: roundPda,
+        ticket: ticketPda,
+        buyer: owner.publicKey,
+        system_program: SystemProgram.programId,
+        // !! why it crash with snake user_data ?? but if snake above round last ticket & ticket id don't increment ?
+        userData: userDataPda,
+      } as any)
+      .signers([owner])
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 1_400_000,
+        }),
+      ])
+      .rpc({
+        skipPreflight: true,
+      });
+
+    try {
+      await program.provider.connection.confirmTransaction(txHash, "finalized");
+    } catch (e) {
+      console.log("Error when buying a ticket: ", e);
+    }
+    console.log(
+      `ticket buy tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
+    );
+
+    const ticketDataAfterBuy = await program.account.fTicket.fetch(ticketPda);
+    console.log("ticketPda data AFTER  buy: ", ticketDataAfterBuy);
+    const roundDataAfterBuy = await program.account.fRound.fetch(roundPda);
+    console.log("round data: AFTER  buy: ", roundDataAfterBuy);
+
+    expect(ticketDataAfterBuy.id.toString()).toEqual(newTicketId.toString());
+    // expect(ticketDataAfterBuy.authority.toString()).toEqual(owner.publicKey);
+
+    userData = await program.account.userData.fetch(userDataPda);
+    let creditsAfter = userData.credits.toString();
+
+    console.log("Credits in user data after taking a ticket: ", creditsAfter);
+    expect((creditsBefore - creditsAfter).toString()).toEqual(
+      TICKET_PRICE.toString()
+    );
+  });
+});

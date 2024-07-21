@@ -27,7 +27,7 @@ pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -
     let ticket = &mut ctx.accounts.ticket;
     let buyer = &ctx.accounts.buyer;
     let user_data = &mut ctx.accounts.user_data;
-    let mut round_clone = ctx.accounts.round.clone();
+    let  round_clone = &mut round.clone();
 
     if user_data.owner != *buyer.key {
         return err!(LotteryError::NotUserDataOWner);
@@ -81,9 +81,11 @@ pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -
     // system_program::transfer(cpi_context, lottery.ticket_price)?;
     user_data.credits -= lottery.ticket_price;
     // msg!("transfer done! ***");
-    round_clone.last_ticket_id += 1;
+    round.last_ticket_id += 1;
+    let x =  round.last_ticket_id;
+        // round_clone.last_ticket_id += 1;
 
-    ticket.id = round_clone.last_ticket_id;
+    ticket.id = x; //round_clone.last_ticket_id;
     ticket.lottery_id = lottery_id;
     ticket.round_id = round_id;
     ticket.authority = buyer.key();

@@ -32,7 +32,7 @@ use helpers::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("7HfEwD9xWd2hTAjAM8BYXRoSEAWruikvDqibLu63DkbD");
+declare_id!("G1ZkRWTyM46zZQjZ1U721iRtp7Rr14fBFhR5GHGcvHZB");
 
 #[program]
 pub mod solwin {
