@@ -1,20 +1,20 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
-[programs.localnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
-
 [programs.devnet]
-solwin = "8jFL32AwYPp139EcPa1cuCV2S2UhMVVS7HLUa4CTD7gG"
+solwin = "6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5"
+
+[programs.localnet]
+solwin = "6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5"
 
 [registry]
-url = "https://api.apr.dev"
+url = "https://api.devnet.solana.com"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/WebstormProjects/solana-program-library/owner.json"
 
 [scripts]
