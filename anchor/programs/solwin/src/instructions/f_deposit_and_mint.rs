@@ -11,7 +11,7 @@ use {
 // use spl_token_lending::state::Reserve;
 use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 use anchor_lang::system_program;
-use crate::state::{ Vault};
+use crate::state::{ FVault};
 // use crate::errors::{VaultError};
 use crate::constants::{VAULT_SEED, TOKEN_MINT_SEED, LOTTERY_SEED, USER_SEED};
 use crate::errors::LotteryError;
@@ -72,14 +72,14 @@ pub struct FDepositAndMint<'info> {
     // Vault
     #[account(
         mut,
-        seeds = [LOTTERY_SEED, &lottery.id.to_le_bytes()],
-        bump = lottery.bump // Vérifie le bump stocké
+        // seeds = [LOTTERY_SEED, &lottery.id.to_le_bytes()],
+        // bump = lottery.bump // Vérifie le bump stocké
     )]
     pub lottery: Account<'info, FLottery>,
     #[account(mut,
-        seeds = [VAULT_SEED, &lottery.id.to_le_bytes()], bump
+        // seeds = [VAULT_SEED, &lottery.id.to_le_bytes()], bump
     )]
-    pub vault: Account<'info, Vault>,
+    pub vault: Account<'info, FVault>,
     #[account(mut)]
     pub user: Signer<'info>, // repeat payer
     // pub system_program: Program<'info, System>,
