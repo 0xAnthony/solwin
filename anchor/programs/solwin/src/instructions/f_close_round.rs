@@ -12,11 +12,11 @@ use anchor_lang::{
 // use crate::constants::{VAULT_SEED};
 
 // use::crate::state::{Lottery, Round};
-use crate::constants::{ LOTTERY_SEED, ROUND_SEED};
+use crate::constants::{ LOTTERY_SEED, ROUND_SEED, USER_SEED};
 use crate::instructions::f_init_lottery::FLottery;
 use crate::errors::LotteryError;
-use crate::instructions::f_init_round::{f_init_round, FInitRound, FRound, FRoundStatus}
-use crate::instructions::f_deposit_and_withdraw::{UserData};
+use crate::instructions::f_init_round::{f_init_round, FInitRound, FRound, FRoundStatus};
+use crate::instructions::f_deposit_and_mint::{UserData};
 // not used at the moment
 // use crate::helpers::xorshift::generate_xorshift64_f64;
 
@@ -33,9 +33,9 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
     let mut round_clone = ctx.accounts.round.clone();
     let signer = &ctx.accounts.signer;
 
-    let closer_data.reward = &mut ctx.accounts.user_data;
+    let closer_data = &mut ctx.accounts.closer_data;
 
-    if closer_data.reward.owner != *signer.key {
+    if closer_data.owner != *signer.key {
         return err!(LotteryError::NotUserDataOWner);
     }
     // check id of lottery and round match the one of pdas:
@@ -48,7 +48,7 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
 
     // check round status is Open
     if round_clone.status != FRoundStatus::Open {
-        return err!(LotteryError::FRoundNotOpen);
+        return err!(LotteryError::RoundNotOpen);
     }
 
     // check timestamp > min_close_time
@@ -62,7 +62,7 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
     let closer_reward_ratio = 1 / 4;
     let winner_reward_ratio = 3 / 4;
 
-    closer_data.reward += lottery.ticket_price * closer_reward_ratio;
+    closer_data.rewards += lottery.ticket_price * closer_reward_ratio;
 
     // @todo ADD REWARD COMPUTATION OF CLOSER:
     // max reward at target (round start + duration)
@@ -90,7 +90,7 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
 
     // round_clone.winner_id = winner_id;
     // close round
-    round_clone.status = RoundStatus::Closed;
+    round_clone.status = FRoundStatus::Closed;
 
 
     // ADD REWARD LOGIC (get fees from vault, transfert to user vault, etc)
@@ -108,29 +108,35 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
         }
     }
 
-
+// @todo PB WITH user_data need its key
     let winner_seeds = &[USER_SEED, &winner_id.to_le_bytes()];
     let (winner_data_address, _bump) = Pubkey::find_program_address(winner_seeds, &program_id);
-    let winner_user_data = Account::<UserData>::try_from(&winner_user_data_address)?;
+    let winner_user_data = Account::<UserData>::try_from(&winner_data_address).map_err(|_| LotteryError::WinnerDataNotFound)?;
 
-    if winner_user_data.is_none() {
-        return err!(LotteryError::WinnerDataNotFound);
-    }
-
-    winner_user_data.reward += lottery.ticket_price * winner_reward_ratio; 
+    winner_user_data.rewards += lottery.ticket_price * winner_reward_ratio; 
 
     // INIT A NEW ROUND
 
+    let round_seeds = &[ROUND_SEED, &(ctx.accounts.lottery.last_round_id + 1).to_le_bytes()];
+    let (round_address, round_bump) = Pubkey::find_program_address(round_seeds, ctx.program_id);
+    
     let init_round_context = FInitRound {
-        round: ctx.accounts.round.clone(),
+        round: Account::try_from(&round_address).map_err(|_| LotteryError::RoundCreationFailed)?,
         lottery: ctx.accounts.lottery.clone(),
-        // !! ?? remove ? or other solution
         authority: ctx.accounts.authority.clone(),
         system_program: ctx.accounts.system_program.clone(),
     };
 
+    let context = Context::new(
+        ctx.program_id,
+        init_round_context,
+        &ctx.accounts.authority,
+        &ctx.accounts.lottery,
+        &ctx.accounts.system_program,
+    );
+
     // Initialiser un nouveau round
-    f_init_round(init_round_context)?;
+    f_init_round(context)?;
 
     Ok(())
 }

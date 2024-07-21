@@ -18,6 +18,7 @@ pub mod f_init_round;
 pub mod f_deposit_and_mint;
 pub mod f_take_ticket;
 pub mod f_close_round;
+pub mod f_claim_rewards;
 // pub mod counter;
 
 pub use create_vault::*;
@@ -40,4 +41,5 @@ pub use f_init_round::*;
 pub use f_deposit_and_mint::*;
 pub use f_take_ticket::*;
 pub use f_close_round::*;
+pub use f_claim_rewards::*;
 // pub use counter::*;

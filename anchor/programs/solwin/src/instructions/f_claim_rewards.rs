@@ -4,7 +4,7 @@ use {
     anchor_lang::prelude::*,
     anchor_spl::{
         associated_token::AssociatedToken,
-        token::{ burn, Burn, Mint, Token, TokenAccount},
+        token::{mint_to, Mint, MintTo, Token, TokenAccount},
     },
     anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL,
 };
@@ -12,9 +12,10 @@ use {
 // use spl_token_lending::state::Reserve;
 // use anchor_lang::system_program;
 use crate::state::{ FVault};
-use crate::constants::{TOKEN_MINT_SEED, VAULT_SEED};
-use crate::instructions::f_deposit_and_withdraw::{UserData};
+use crate::constants::{TOKEN_MINT_SEED, VAULT_SEED, USER_SEED};
+use crate::instructions::f_deposit_and_mint::{UserData};
 use crate::errors::RewardError;
+use crate::instructions::f_init_lottery::{FLottery};
 
 
 
@@ -29,8 +30,8 @@ pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
         return err!(RewardError::NotUserDataOWner);
     }
     // case of user who had bought token and not or partially deposited SOL
-    let reward_amount = user_data.reward;
-    user_data.reward = 0;
+    let reward_amount = user_data.rewards;
+    user_data.rewards = 0;
 
     // MOCK LENDING INTEREST, looking for solution to connect to protocols on devnet
 
@@ -78,6 +79,9 @@ pub struct ClaimRewards<'info> {
         bump)]
     pub user_data: Account<'info, UserData>,
 
+    // !!!!!!!!! duplicates
+    #[account(mut)]
+    pub signer: Signer<'info>,
     // Token
     #[account(
         mut,
