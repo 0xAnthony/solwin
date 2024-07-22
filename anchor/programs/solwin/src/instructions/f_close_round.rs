@@ -1,5 +1,8 @@
 #![allow(clippy::result_large_err)]
 
+use rand::Rng;
+use rand::rngs::StdRng;
+use rand::SeedableRng;
 use anchor_lang::{
     prelude::*,
     solana_program::{hash::hash, },
@@ -22,6 +25,13 @@ use crate::instructions::f_take_ticket::{FTicket};
 // not used at the moment
 // use crate::helpers::xorshift::generate_xorshift64_f64;
 
+// fn generate_random_number(clock: &Clock) -> u32 {
+//     let mut rng = rand::thread_rng();
+//     // Générer un nombre aléatoire basé sur l'horodatage et slot
+//     let seed = (clock.unix_timestamp, clock.slot);
+//     rng.seed_from_u64(seed.0 as u64 + seed.1 as u64);
+//     rng.gen_range(0..u32::MAX) // Générer un nombre aléatoire entre 0 et u32::MAX
+// }
 
 // caller of the function should be a user to get rewards
 pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
@@ -31,7 +41,10 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
 
     let lottery = &mut ctx.accounts.lottery;
     let round = &mut ctx.accounts.round;
-
+        if round.status != FRoundStatus::Open {
+        return err!(LotteryError::RoundNotOpen);
+    }
+round.status = FRoundStatus::Closed;
     let mut round_clone = ctx.accounts.round.clone();
     let signer = &ctx.accounts.signer;
 
@@ -49,9 +62,9 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
     }
 
     // check round status is Open
-    if round_clone.status != FRoundStatus::Open {
-        return err!(LotteryError::RoundNotOpen);
-    }
+    // if round_clone.status != FRoundStatus::Open {
+    //     return err!(LotteryError::RoundNotOpen);
+    // }
 
     // check timestamp > min_close_time
     if clock.unix_timestamp < round_clone.min_close_time  {
@@ -80,11 +93,30 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
     // to get a random number between 1 and last_ticket_id:
     // let random_num = generate_xorshift64_f64(clock.unix_timestamp);
    
-   let random_num =((u64::from_le_bytes(
-            <[u8; 8]>::try_from(&hash(&clock.unix_timestamp.to_be_bytes()).to_bytes()[..8])
-                .unwrap(),
-        ) * clock.slot)
-            % u32::MAX as u64) as u32;
+//    let random_num =((u64::from_le_bytes(
+//             <[u8; 8]>::try_from(&hash(&clock.unix_timestamp.to_be_bytes()).to_bytes()[..8])
+//                 .unwrap(),
+//         ) * clock.slot)
+//             % u32::MAX as u64) as u32;
+
+    // let mut rng = rand::thread_rng();
+    // // Générer un nombre aléatoire basé sur l'horodatage et slot
+    // let seed = (clock.unix_timestamp, clock.slot);
+    // rng.seed_from_u64(seed.0 as u64 + seed.1 as u64);
+    // let random_num = rng.gen_range(0..u32::MAX); // Générer un nombre aléatoire entre 0 et u32::MAX
+   
+    let seed = (clock.unix_timestamp, clock.slot);
+    let seed_value = seed.0 as u64 + seed.1 as u64;
+
+       let mut seed_array = [0u8; 32]; // Créer un tableau de 32 octets initialisé à 0
+    seed_array[..8].copy_from_slice(&seed_value.to_le_bytes()); // Remplacer les 8 premiers octets par la valeur de la semence
+
+    // Initialisez StdRng avec le tableau de semence
+    let mut rng = StdRng::from_seed(seed_array);
+
+    let random_num = rng.gen_range(0..u32::MAX);
+   
+    // let random_num = generate_random_number(&clock);
     // random_num btw 0 and 1, use it to get the winner from 1 to last_ticket_id
     // let winner_id = (random_num * last_ticket_id as f64) as u32;
     let winner_ticket_id = (random_num % last_ticket_id) + 1;
@@ -197,6 +229,7 @@ pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) 
 
     //     // Appeler la fonction pour initialiser le prochain round
     // f_init_round(next_round_ctx)?;
+    
 
     lottery.last_round_id += 1;
     // Initialize the round

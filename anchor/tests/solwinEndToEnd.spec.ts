@@ -29,6 +29,7 @@ import {
 // import { describe, it } from "node:test";
 // import { Console } from "console";
 import { jest } from "@jest/globals";
+import { describe } from "node:test";
 // import { describe, it } from "node:test";
 // import { describe, it } from ""
 // import { describe, it } from "node:test";
@@ -43,6 +44,8 @@ jest.setTimeout(30000);
  **************************************************************************************/
 // add f_ or F prefix to function and types!! Don't miss it otherwise => call to old func == pb
 
+// CLOSE_ROUND is skipped as it fail if already closed or with old round
+// increments SEEDS suffix and remove skip to test it
 /*************************************************************************************
  *
  *      PREPARING CONST & VARS
@@ -54,16 +57,16 @@ anchor.setProvider(provider);
 const program = anchor.workspace.Solwin as Program<Solwin>;
 
 // //~/WebstormProjects/solana-program-library/owner.json
-const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
+const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
 
 // CHANGE THE SEED (+1) to test initialization of new accounts
-const USER_SEED = "user32";
+const USER_SEED = "user36";
 
-const MASTER_LOTTERY_SEED = "master_lottery32";
-const LOTTERY_SEED = "lottery32";
-const ROUND_SEED = "round32";
-const VAULT_SEED = "vault32";
-const TICKET_SEED = "ticket32";
+const MASTER_LOTTERY_SEED = "master_lottery36";
+const LOTTERY_SEED = "lottery36";
+const ROUND_SEED = "round36";
+const VAULT_SEED = "vault36";
+const TICKET_SEED = "ticket36";
 // at the moment only one price: 0.1 SOL
 const TICKET_PRICE = new BN(0.1 * LAMPORTS_PER_SOL);
 // round duration time in seconds (1 day), 10 sec for testing
@@ -87,7 +90,7 @@ const newRoundID = new BN(1); // default: 1
 const initialLastLotteryId = 0;
 
 // token
-const MINT_SEED = "mint32";
+const MINT_SEED = "mint36";
 const METADATA_SEED = "metadata";
 // default metaplex token metadata program
 // https://metaplex-foundation.github.io/metaplex-program-library/docs/token-metadata/index.html#accountProviders.__type.Metadata
@@ -713,5 +716,114 @@ describe("Lottery: Take Ticket", () => {
     expect((creditsBefore - creditsAfter).toString()).toEqual(
       TICKET_PRICE.toString()
     );
+  });
+});
+
+describe("Lottery: Close Round", () => {
+  // TEST FAILS IF ALREADY CLOSED as we test Status
+  // manage round id in config of test to be abailble to run new round => init game..
+  // and make a test to explicitly show failure if round is already closed
+
+  it("should close the round", async () => {
+    const masterLotteryInfo = await program.provider.connection.getAccountInfo(
+      masterLotteryPda
+    );
+    const vaultInfo = await program.provider.connection.getAccountInfo(
+      vaultPda
+    );
+    const lotteryInfo = await program.provider.connection.getAccountInfo(
+      lotteryPda
+    );
+    const roundInfo = await program.provider.connection.getAccountInfo(
+      roundPda
+    );
+
+    if (!masterLotteryInfo || !vaultInfo || !lotteryInfo || !roundInfo) {
+      console.error(
+        "!! PDAs not initialized !!, skipping tests as they will fail"
+      );
+      return;
+    }
+
+    const roundData = await program.account.fRound.fetch(roundPda);
+
+    console.log("round info: ", roundInfo);
+    console.log("round data: ", roundData);
+
+    const roundStatus = Object.keys(roundData.status)[0];
+    console.log("round status before closing: ", roundStatus);
+
+    // next round pda
+    const nextRoundID = new BN(roundData.id + 1);
+    console.log("id of the future round: ", nextRoundID.toString());
+
+    const [newRoundPda, newRoundBump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(ROUND_SEED), nextRoundID.toArrayLike(Buffer, "le", 4)],
+        program.programId
+      );
+    const nextRoundInfo = await program.provider.connection.getAccountInfo(
+      newRoundPda
+    );
+    if (nextRoundInfo) {
+      console.error(
+        `ATTENTION: nextRoundPda found, IT SHOULD NOT BE INITIALIZED YET`
+      );
+    }
+
+    // userData pda of the closer
+    const [userDataPda, userDataBump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(USER_SEED),
+          newLotteryID.toArrayLike(Buffer, "le", 4),
+          owner.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
+    let userData = await program.account.userData.fetch(userDataPda);
+    let creditsBefore = userData.credits.toString();
+
+    console.log("Credits in user data before taking a ticket: ", creditsBefore);
+
+    const txHash = await program.methods
+      .fCloseRound(newLotteryID, newRoundID)
+      .accounts({
+        lottery: lotteryPda,
+        round: roundPda,
+        system_program: SystemProgram.programId,
+        // vault: vaultPda,
+        closerData: userDataPda,
+        authority: owner.publicKey,
+        signer: owner.publicKey,
+        nextRound: newRoundPda,
+      } as any)
+      .signers([owner]) //user
+      .preInstructions([
+        anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 1_400_000,
+        }),
+      ])
+      .rpc({
+        skipPreflight: true,
+      });
+
+    try {
+      await program.provider.connection.confirmTransaction(txHash, "finalized");
+    } catch (e) {
+      console.log("Error when closing round: ", e);
+    }
+    console.log(
+      `round close tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
+    );
+
+    const roundDataAfterClose = await program.account.fRound.fetch(roundPda);
+    console.log("round data: AFTER  close: ", roundDataAfterClose);
+
+    const roundStatusAfterClose = Object.keys(roundDataAfterClose.status)[0];
+    console.log("round status after closing: ", roundStatusAfterClose);
+
+    expect(roundStatusAfterClose).toEqual("closed");
   });
 });
