@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
+import {Program, Provider} from "@coral-xyz/anchor";
 // import { Bank } from "../target/types/bank";
 import { Solwin } from "../target/types/solwin";
 import {
@@ -23,13 +23,13 @@ const getProgram = (T: any) => {
   return anchor.workspace[T] as Program<typeof T>;
 };
 
-const getBalance = async (provider, publicKey) => {
+const getBalance = async (provider: Provider, publicKey: PublicKey) => {
   const balance = await provider.connection.getBalance(publicKey);
   return balance;
 };
 
 const createWalletAndAirdrop = async (
-  program,
+  program: Program,
   amountInSol: number
 ): Promise<Keypair> => {
   const wallet = new Keypair();
@@ -47,7 +47,7 @@ const createWalletAndAirdrop = async (
 //     return Keypair.fromSecretKey(secretKeyUint8Array);
 //  }
 
-const createKeypairFromSecretKey = (secretKey) => {
+const createKeypairFromSecretKey = (secretKey: string) => {
   const secretKeyArray = JSON.parse(secretKey);
   const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
   return Keypair.fromSecretKey(secretKeyUint8Array);
@@ -59,7 +59,7 @@ const getConfig = async () => {
 
   const program = anchor.workspace.Solwin as Program<Solwin>;
 
-  const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
+  const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
   return { provider, program, owner };
 };
 // module.exports = {

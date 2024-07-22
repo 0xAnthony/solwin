@@ -15215,11 +15215,6 @@
       },
       {
         "source": "web",
-        "target": "anchor",
-        "type": "static"
-      },
-      {
-        "source": "web",
         "target": "npm:@coral-xyz/anchor",
         "type": "static"
       },
@@ -15237,6 +15232,11 @@
         "source": "web",
         "target": "npm:@solana/wallet-adapter-react-ui",
         "type": "dynamic"
+      },
+      {
+        "source": "web",
+        "target": "anchor",
+        "type": "static"
       },
       {
         "source": "web",

@@ -4,7 +4,7 @@ function secondsUntilMidnight() {
     const now = new Date();
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0);
-    const differenceInMilliseconds = midnight - now;
+    const differenceInMilliseconds = midnight.getTime() - now.getTime();
     return Math.floor(differenceInMilliseconds / 1000);
 }
 
