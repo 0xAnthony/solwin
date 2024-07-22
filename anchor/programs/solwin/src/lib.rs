@@ -15,7 +15,6 @@ use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 // };
 use crate::xorshift::{RngAccount};
 
-
 pub mod constants;
 pub mod errors;
 pub mod instructions;
@@ -32,7 +31,7 @@ use helpers::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("6EBNXWifHe8goCKF6ARu3FXTQUMvAcwwrcNwMwTDjhX5");
+declare_id!("HDSscGxWMK7enBDzByJWN7TGqkL7r3WjfTL4iQ38iyYW");
 
 #[program]
 pub mod solwin {
@@ -77,8 +76,6 @@ pub mod solwin {
     pub fn withdraw_solwin(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
         instructions::withdraw(ctx, amount)
     }
-
-    
 
     /***********************************************
      * 
@@ -195,7 +192,6 @@ pub mod solwin {
      ***********************************************/
     pub fn initialize_master_lottery(ctx: Context<InitializeMasterLottery>) -> Result<()> {
         instructions::initialize_master_lottery(ctx)
-     
     }  
 
     pub fn initialize_lottery(ctx: Context<InitializeLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
@@ -214,7 +210,6 @@ pub mod solwin {
         instructions::close_round(ctx, lottery_id, round_id)
     }
 }
-
 
 
 // LENDING DATA

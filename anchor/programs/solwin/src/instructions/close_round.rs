@@ -72,9 +72,7 @@ pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> 
     // close round
     round_clone.status = RoundStatus::Closed;
 
-
-    // ADD REWARD LOGIC (get fees from vault, transfert to user vault, etc)
-
+    // TODO: ADD REWARD LOGIC (get fees from vault, transfert to user vault, etc)
 
     // display round status, round & lottery id, winner_id,// reward
     match round_clone.winner_id {
@@ -83,7 +81,6 @@ pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> 
         },
         None => {
             msg!("Round closed with id: {}, no winner yet", round_clone.id);
-     
         }
     }
 

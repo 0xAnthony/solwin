@@ -7,9 +7,6 @@ use {
     },
 };
 use crate::constants::{TOKEN_MINT_SEED};
-
-
-
     pub fn mint_tokens(ctx: Context<MintTokens>, quantity: u64) -> Result<()> {
         let seeds = &[TOKEN_MINT_SEED, &[ctx.bumps.mint]]; //"mint".as_bytes()
         let signer = [&seeds[..]];
