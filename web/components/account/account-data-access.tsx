@@ -6,7 +6,7 @@ import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
+  SystemProgram, Transaction,
   TransactionMessage,
   TransactionSignature,
   VersionedTransaction,
