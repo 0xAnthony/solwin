@@ -8,6 +8,8 @@ import idl from "@/idl.json";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
 import * as anchor from "@coral-xyz/anchor";
 import toast from "react-hot-toast";
+import {ClaimTickets} from "@/components/lottery/ClaimTickets";
+import {CloseRound} from "@/components/lottery/CloseRound";
 
 const valueToUi = (value) => {
     return Math.round((value / LAMPORTS_PER_SOL) * 100000) / 100000
@@ -17,6 +19,7 @@ export const SwapWidget = () => {
     const provider = useAnchorProvider();
     const wallet = useWallet();
 
+    const canClose = false;
     const [action, setAction] = useState("deposit");
     const [inputValue, setInputValue] = useState("");
 
@@ -41,6 +44,52 @@ export const SwapWidget = () => {
             setInputValue(swSolBalance.uiAmount)
         }
     }
+
+    const newLotteryID = new anchor.BN(1);
+
+    const program = new Program(idl, provider);
+
+    const USER_SEED = "user32";
+    const MINT_SEED = "mint32";
+    const LOTTERY_SEED = "lottery32";
+    const VAULT_SEED = "vault32";
+    const ROUND_SEED = "round36";
+
+    const newRoundID = new anchor.BN(1);
+
+    const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(ROUND_SEED), newRoundID.toArrayLike(Buffer, "le", 4)],
+        program.programId
+    );
+
+    const [lotteryPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(LOTTERY_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
+        program.programId
+    );
+
+    const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(VAULT_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
+        program.programId
+    );
+
+    const [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(MINT_SEED)],
+        program.programId
+    );
+
+    let userDataPda;
+    if (wallet.publicKey) {
+        [userDataPda] =
+            anchor.web3.PublicKey.findProgramAddressSync(
+                [
+                    Buffer.from(USER_SEED),
+                    newLotteryID.toArrayLike(Buffer, "le", 4),
+                    wallet.publicKey.toBuffer(),
+                ],
+                program.programId
+            );
+    }
+
 
     const { publicKey: address } = useWallet();
     const {data: solBalance} = useGetBalance({ address });
@@ -72,40 +121,6 @@ export const SwapWidget = () => {
         }
 
         try {
-            const newLotteryID = new anchor.BN(1);
-
-            const program = new Program(idl, provider);
-
-            const USER_SEED = "user32";
-            const MINT_SEED = "mint32";
-            const LOTTERY_SEED = "lottery32";
-            const VAULT_SEED = "vault32";
-
-            const [lotteryPda] = anchor.web3.PublicKey.findProgramAddressSync(
-                [Buffer.from(LOTTERY_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
-                program.programId
-            );
-
-            const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-                [Buffer.from(VAULT_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
-                program.programId
-            );
-
-            const [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-                [Buffer.from(MINT_SEED)],
-                program.programId
-            );
-
-            const [userDataPda] =
-                anchor.web3.PublicKey.findProgramAddressSync(
-                    [
-                        Buffer.from(USER_SEED),
-                        newLotteryID.toArrayLike(Buffer, "le", 4),
-                        wallet.publicKey.toBuffer(),
-                    ],
-                    program.programId
-                );
-
             const payer_mint_ata = await anchor.utils.token.associatedAddress({
                 mint: mintAccount,
                 owner: wallet.publicKey,
@@ -181,6 +196,22 @@ export const SwapWidget = () => {
                 <p className="text-center">
                     Chances impact: +0.00%
                 </p>
+                <ClaimTickets
+                    swBalance={swSolBalance}
+                    program={program}
+                    roundPda={roundPda}
+                    lotteryPda={lotteryPda}
+
+                    userDataPda={userDataPda}
+                />
+                <CloseRound
+                    canClose={canClose}
+                    program={program}
+                    roundPda={roundPda}
+                    lotteryPda={lotteryPda}
+
+                    userDataPda={userDataPda}
+                />
             </div>
         </div>
     );
