@@ -679,7 +679,6 @@ describe("Lottery: Take Ticket", () => {
         ticket: ticketPda,
         buyer: owner.publicKey,
         system_program: SystemProgram.programId,
-        // !! why it crash with snake user_data ?? but if snake above round last ticket & ticket id don't increment ?
         userData: userDataPda,
       } as any)
       .signers([owner])
