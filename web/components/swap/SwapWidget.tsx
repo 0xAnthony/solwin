@@ -1,14 +1,12 @@
 import {useGetBalance, useGetTokenAccounts} from "@/components/account/account-data-access";
-import {useAnchorWallet, useConnection, useWallet} from "@solana/wallet-adapter-react";
-import {clusterApiUrl, Connection, LAMPORTS_PER_SOL, PublicKey} from "@solana/web3.js";
+import {useWallet} from "@solana/wallet-adapter-react";
+import {clusterApiUrl, Connection, LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {useMemo, useState} from "react";
 import {SWSOL_MINTER} from "@/constants";
 import {Program} from "@coral-xyz/anchor";
-import idl from "../../../anchor/target/idl/solwin.json";
+import idl from "@/idl.json";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
 import * as anchor from "@coral-xyz/anchor";
-import {getBalance} from "../../../anchor/tests/testHelper";
-import web3 from "@solana/web3.js";
 import toast from "react-hot-toast";
 
 const valueToUi = (value) => {
