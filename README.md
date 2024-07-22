@@ -18,8 +18,9 @@
   - [Studied but Not Implemented](#studied-but-not-implemented)
 - [Commands to Launch the Project](#commands-to-launch-the-project)
 - [Project Structure](#project-structure)
-  - [Component Explanations](#component-explanations)
-  - [Front-End Structure](#front-end-structure)
+  - [Repository](#Repository)
+  - [Program  (anchor folder)](#Program)
+  - [Front-End Structure (web folder)](#front-end-structure)
 - [Roadmap](#roadmap)
 - [Challenges Encountered](#challenges-encountered)
   
@@ -27,16 +28,15 @@
 
 ## Team
 
-- Anthony Consolaro
-- Igor Bournazel
+- Anthony Consolaro / _6ZDmJvgVnZWZmv2ickKT2h6Emb7xd6cAZTYtYRAgy4VL_
+- Igor Bournazel / _3qcwwUugaabkMbfmYKTsuZTqWuEsiWbZasK1zPeGscnz_
 - ~~Mickael Sanches Loureiro~~
 
 ## Presentation Links
 
-- [Vercel Link](link_vercel)
-- [Devnet Contract Addresses](https://explorer.solana.com/tx/2baDqxyqxSG8ad9FXtZ3rBezoAs8AraP1AaKkAKSZrz8TSMTQSzKKFaGYxknU6zKJR12N7DG9bMENZnzfRERWCs2?cluster=devnet)
-- [Presentation Video](link_video)
-- [Documentation or Presentation](link_docs)
+- [Vercel Link](https://solwin-murex.vercel.app/)
+- [Last Devnet Contract Address](https://explorer.solana.com/address/G1ZkRWTyM46zZQjZ1U721iRtp7Rr14fBFhR5GHGcvHZB?cluster=devnet)
+- [Demo video](https://youtu.be/TovOUtIZH10)
 
 ## Problem Statement
 
@@ -126,8 +126,8 @@ This project is generated with the [create-solana-dapp](https://github.com/solan
 ##### Clone the repo
 
 ```shell
-git clone <repo-url>
-cd <repo-name>
+git clone https://github.com/0xAnthony/solwin.git
+cd solwin
 ```
 
 ##### Install Dependencies
@@ -135,6 +135,11 @@ cd <repo-name>
 ```shell
 npm install
 ```
+
+##### Wallets configuration
+
+Create a .env file in the anchor folder, following the structure of .env.example.
+The owner wallet used for testing must correspond to the wallet JSON file specified in the Anchor.toml.
 
 ##### Start the web app
 
@@ -206,7 +211,11 @@ npm run build
 
 ## Project Structure
 
-### program
+### Repository
+
+We use NX for managing our monorepo. It handles tasks such as organizing our projects, enabling efficient builds, and facilitating dependency management. Additionally, NX provides powerful tools for code sharing, testing, and optimizing the development workflow across multiple applications and libraries within the repository.
+
+### Program (anchor folder)
 
 /programs/solwin/src  
 ├── lib.rs # Main logic  
@@ -215,17 +224,22 @@ npm run build
 ├── /instructions.rs # Transactions  
 ├── /state.rs # State management
 
-#### Component Explanations
+PDAs (Program Derived Addresses): Used to derive program addresses and manage lottery state. They ensure the security and integrity of the data.
 
-PDAs (Program Derived Addresses): Used to derive program addresses and manage lottery state. They ensure the security and integrity of the data.  
-Functions: List of the main functions in the program and their utility.
+- masterLottery PDA: Manages the global state storing the current - - lottery index.
+- lotteryPda: Manages the lottery state for each lottery.
+- vaultPda: Manages the vault state, one by lottery.
+- roundPda: Manages the round state for each round.
+- ticketPda: Manages the ticket state for one ticket of one user.
+- userDataPda: Manages the user data state of one user for one lottery.
 
-### Front-End Structure
+### Front-End Structure (web folder)
 
-The front-end uses Next.js to manage client-side rendering and user interactions. The connection context and functions are located in:
+The front-end uses Next.js to manage client-side rendering and user interactions.
 
-context/ConnectionContext.tsx: Manages connection state and interactions with the blockchain.  
-components/TicketPurchase.tsx: Component for purchasing lottery tickets.
+We use the most recent app router.
+/components hold every components of the project
+We use DaisyUI for the design
 
 ## Roadmap (features to be implemented)
 
