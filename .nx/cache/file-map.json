@@ -72,18 +72,6 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "vercel.json",
-        "hash": "1598408354266276258"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "3494843969422251966"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "2818319484801055047"
-      },
-      {
         "file": ".gitignore",
         "hash": "5724493968319023548"
       },
@@ -92,8 +80,20 @@
         "hash": "11743324811412479332"
       },
       {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
+        "file": "package-lock.json",
+        "hash": "2818319484801055047"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "6034131559681008051"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "1598408354266276258"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "3494843969422251966"
       },
       {
         "file": "LICENSE",
@@ -104,8 +104,8 @@
         "hash": "14557014133078539282"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "6034131559681008051"
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
       },
       {
         "file": "package.json",
@@ -295,13 +295,14 @@
         },
         {
           "file": "web/components/swap/SwapWidget.tsx",
-          "hash": "11511778975443080889",
+          "hash": "10930427976592570050",
           "deps": [
             "npm:@solana/wallet-adapter-react",
             "npm:@solana/web3.js",
             "npm:react",
             "npm:@coral-xyz/anchor",
-            "anchor"
+            "anchor",
+            "npm:react-hot-toast"
           ]
         },
         {
@@ -315,7 +316,7 @@
         },
         {
           "file": "web/constants.ts",
-          "hash": "13940984939895199816"
+          "hash": "17901145191636646625"
         },
         {
           "file": "web/index.d.ts",

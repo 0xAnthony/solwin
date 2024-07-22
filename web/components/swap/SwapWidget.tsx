@@ -7,6 +7,9 @@ import {Program} from "@coral-xyz/anchor";
 import idl from "../../../anchor/target/idl/solwin.json";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
 import * as anchor from "@coral-xyz/anchor";
+import {getBalance} from "../../../anchor/tests/testHelper";
+import web3 from "@solana/web3.js";
+import toast from "react-hot-toast";
 
 const valueToUi = (value) => {
     return Math.round((value / LAMPORTS_PER_SOL) * 100000) / 100000
@@ -45,27 +48,6 @@ export const SwapWidget = () => {
     const { publicKey: address } = useWallet();
     const {data: solBalance} = useGetBalance({ address });
 
-
-    const accounts = await connection.getParsedProgramAccounts(
-        new PublicKey("HDSscGxWMK7enBDzByJWN7TGqkL7r3WjfTL4iQ38iyYW"),
-        {
-            filters: [
-                {
-                    dataSize: 165, // number of bytes
-                },
-                {
-                    memcmp: {
-                        offset: 0, // Offset where the mint address is stored in the account data
-                        bytes: mintAddress, // Base58 encoded mint address
-                    },
-                },
-            ],
-        }
-
-    console.log(vaultPda)
-    const {data: totalInPool} = useGetBalance({ address: vaultPda });
-    console.log(totalInPool)
-
     const {data: tokenAccounts} = useGetTokenAccounts({ address });
 
     const {swSolBalance} = useMemo(() => {
@@ -88,88 +70,96 @@ export const SwapWidget = () => {
         }, [tokenAccounts]);
 
     const submit = async () => {
-        if (!address) {
+        if (!address || !provider) {
             return;
         }
 
-        if (!provider) {
-            return;
+        try {
+            const newLotteryID = new anchor.BN(1);
+
+            const program = new Program(idl, provider);
+
+            const USER_SEED = "user32";
+            const MINT_SEED = "mint32";
+            const LOTTERY_SEED = "lottery32";
+            const VAULT_SEED = "vault32";
+
+            const [lotteryPda] = anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from(LOTTERY_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
+                program.programId
+            );
+
+            const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from(VAULT_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
+                program.programId
+            );
+
+            const [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from(MINT_SEED)],
+                program.programId
+            );
+
+            const [userDataPda] =
+                anchor.web3.PublicKey.findProgramAddressSync(
+                    [
+                        Buffer.from(USER_SEED),
+                        newLotteryID.toArrayLike(Buffer, "le", 4),
+                        wallet.publicKey.toBuffer(),
+                    ],
+                    program.programId
+                );
+
+            const payer_mint_ata = await anchor.utils.token.associatedAddress({
+                mint: mintAccount,
+                owner: wallet.publicKey,
+            });
+
+            let value = parseFloat(inputValue) * LAMPORTS_PER_SOL;
+            let bnValue = new anchor.BN(value);
+
+            if (action === "deposit") {
+                const tx = await program.methods
+                    .fDeposit(newLotteryID, bnValue)
+                    .accounts({
+                        lottery: lotteryPda,
+                        vault: vaultPda,
+                        user: wallet.publicKey,
+                        user_data: userDataPda,
+                        signer: wallet.publicKey,
+                        mint: mintAccount,
+                        payer_mint_ata,
+                        payer: wallet.publicKey,
+                        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+                        system_program: anchor.web3.SystemProgram.programId,
+                        token_program: anchor.utils.token.TOKEN_PROGRAM_ID,
+                        associated_token_program: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+                    } as any)
+                    .rpc();
+                console.log("Deposit", tx)
+            } else {
+                const tx = await program.methods
+                    .fWithdraw(newLotteryID, bnValue)
+                    .accounts({
+                        lottery: lotteryPda,
+                        vault: vaultPda,
+                        user: wallet.publicKey,
+                        user_data: userDataPda,
+                        mint: mintAccount,
+                        payer_mint_ata,
+                        payer: wallet.publicKey,
+                        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+                        system_program: anchor.web3.SystemProgram.programId,
+                        token_program: anchor.utils.token.TOKEN_PROGRAM_ID,
+                        associated_token_program: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+                    } as any).rpc();
+                console.log("Withdraw", tx)
+            }
+            setInputValue("");
+            toast.success("Transaction success !")
+        } catch {
+            toast.error("An error occured");
         }
-        const program = new Program(idl, provider);
 
-        const METADATA_SEED = "metadata";
-        const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
-            "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
-        );
-        const MINT_SEED = "mint4";
-
-        const [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-            [Buffer.from(MINT_SEED)],
-            program.programId
-        );
-
-        const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-            [Buffer.from("vault28")],
-            program.programId
-        );
-
-        const destination = await anchor.utils.token.associatedAddress({
-            mint: mintAccount,
-            owner: wallet.publicKey,
-        });
-
-        let ctx = {
-            vault: vaultPda,
-            user: wallet.publicKey,
-            mint: mintAccount,
-            payer_mint_ata: destination,
-            payer: wallet.publicKey,
-            rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-            systemProgram: anchor.web3.SystemProgram.programId,
-            tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-            associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
-        };
-
-        let value = parseFloat(inputValue) * LAMPORTS_PER_SOL;
-        let bnValue = new anchor.BN(value);
-
-        if (action === "deposit") {
-            // const metadata = {
-                //     name: "Net2Dev SPL Rewards Token",
-                //     symbol: "N2DR",
-                //     uri: "https://arweave.net/Xjqaj_rYYQGrsiTk9JRqpguA813w6NGPikcRyA1vAHM",
-                //     decimals: 9,
-                // };
-                //
-                // const [metadataPDA, bumpPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-                //     [
-                //         Buffer.from(METADATA_SEED),
-                //         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-                //         mintAccount.toBuffer(),
-                //     ],
-                //     TOKEN_METADATA_PROGRAM_ID
-                // );
-                //
-                // let ctx = {
-                //     vault: vaultPda,
-                //     user: wallet.publicKey,
-                //     payer: wallet.publicKey, //payer,
-                //     mint: mintAccount,
-                //     metadata: metadataPDA,
-                //     tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-                //     tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-                //     systemProgram: anchor.web3.SystemProgram.programId,
-                //     rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-                // };
-                //
-                // let txCreate = await program.methods.createSolwinApp(metadata).accounts(ctx).rpc();
-
-                let tx = await program.methods.depositSolwinApp(bnValue).accounts(ctx).rpc();
-            console.log("Deposit", tx)
-        } else {
-            let tx = await program.methods.withdrawSolwinApp(bnValue).accounts(ctx).rpc();
-            console.log("Withdraw", tx)
-        }
     }
 
     return (
