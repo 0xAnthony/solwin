@@ -57,16 +57,16 @@ anchor.setProvider(provider);
 const program = anchor.workspace.Solwin as Program<Solwin>;
 
 // //~/WebstormProjects/solana-program-library/owner.json
-const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
+const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
 
 // CHANGE THE SEED (+1) to test initialization of new accounts
-const USER_SEED = "user34";
+const USER_SEED = "user36";
 
-const MASTER_LOTTERY_SEED = "master_lottery34";
-const LOTTERY_SEED = "lottery34";
-const ROUND_SEED = "round34";
-const VAULT_SEED = "vault34";
-const TICKET_SEED = "ticket34";
+const MASTER_LOTTERY_SEED = "master_lottery36";
+const LOTTERY_SEED = "lottery36";
+const ROUND_SEED = "round36";
+const VAULT_SEED = "vault36";
+const TICKET_SEED = "ticket36";
 // at the moment only one price: 0.1 SOL
 const TICKET_PRICE = new BN(0.1 * LAMPORTS_PER_SOL);
 // round duration time in seconds (1 day), 10 sec for testing
@@ -90,7 +90,7 @@ const newRoundID = new BN(1); // default: 1
 const initialLastLotteryId = 0;
 
 // token
-const MINT_SEED = "mint34";
+const MINT_SEED = "mint36";
 const METADATA_SEED = "metadata";
 // default metaplex token metadata program
 // https://metaplex-foundation.github.io/metaplex-program-library/docs/token-metadata/index.html#accountProviders.__type.Metadata

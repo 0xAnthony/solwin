@@ -44,7 +44,7 @@ anchor.setProvider(provider);
 const program = anchor.workspace.Solwin as Program<Solwin>;
 
 // //~/WebstormProjects/solana-program-library/owner.json
-const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY);
+const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
 
 // CHANGE THE SEED (+1) to test initialization of new accounts
 const MASTER_LOTTERY_SEED = "master_lottery4";
