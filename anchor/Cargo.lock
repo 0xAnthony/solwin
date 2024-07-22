@@ -2127,6 +2127,7 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "mpl-token-metadata 3.2.3",
+ "rand 0.8.5",
  "solana-program",
  "spl-token-lending",
 ]

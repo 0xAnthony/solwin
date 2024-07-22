@@ -1,5 +1,5 @@
-pub const VAULT_SEED: &[u8] = b"vault32";
-pub const TOKEN_MINT_SEED: &[u8] = b"mint32";
+pub const VAULT_SEED: &[u8] = b"vault33";
+pub const TOKEN_MINT_SEED: &[u8] = b"mint33";
 // /// Seed for deriving the `Counter` account PDA.
 // pub const SEED_COUNTER: &[u8] = b"counter";
 // /// Seed for thread_authority PDA.
@@ -17,8 +17,8 @@ pub const TOKEN_MINT_SEED: &[u8] = b"mint32";
 // pub const EACH_HOUR_WITHIN_9_17: &[u8] = "0 0 9-17 * * * *".into();
 
 // Lottery
-pub const MASTER_LOTTERY_SEED: &[u8] = b"master_lottery32";
-pub const LOTTERY_SEED: &[u8] = b"lottery32";
-pub const ROUND_SEED: &[u8] = b"round32";
-pub const TICKET_SEED: &[u8] = b"ticket32";
-pub const USER_SEED: &[u8] = b"user32";
+pub const MASTER_LOTTERY_SEED: &[u8] = b"master_lottery33";
+pub const LOTTERY_SEED: &[u8] = b"lottery33";
+pub const ROUND_SEED: &[u8] = b"round33";
+pub const TICKET_SEED: &[u8] = b"ticket33";
+pub const USER_SEED: &[u8] = b"user33";
