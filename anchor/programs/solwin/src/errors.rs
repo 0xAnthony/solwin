@@ -13,6 +13,13 @@ pub enum XorshiftError {
 
 }
 
+// !!! duplicate !!!
+#[error_code]
+pub enum RewardError {
+    #[msg("Signer not user data owner")]
+    NotUserDataOWner,
+}
+
 #[error_code]
 pub enum LotteryError {
     #[msg("Winner already exists")]
@@ -25,6 +32,20 @@ pub enum LotteryError {
     InvalidRoundId,
     #[msg("Round not closeable")]
     RoundNotCloseable,
+    #[msg("Invalid lottery account")]
+    InvalidAccount,
+    #[msg("Signer not user data owner")]
+    NotUserDataOWner,
+    #[msg("Not enough credits")]
+    NotEnoughCredits,
+    #[msg("Winner Data Not Found")]
+    WinnerDataNotFound,
+    #[msg("Round Creation Failed")]
+    RoundCreationFailed,
+    #[msg("Winner Ticket Not Found")]
+    WinnerTicketNotFound,
+    // #[msg("Round Creation Failed")]
+    // RoundCreationFailed,
 }
 
 // #[error_code]

@@ -7,8 +7,10 @@ use anchor_lang::prelude::*;
 // // use anchor_lang::system_program;
 // use crate::state::{ Vault};
 // use crate::constants::{VAULT_SEED};
-use crate::constants::{MASTER_LOTTERY_SEED, LOTTERY_SEED};
-use crate::instructions::init_master_lottery::{MasterLottery};
+use crate::constants::{MASTER_LOTTERY_SEED, VAULT_SEED, LOTTERY_SEED};
+use crate::instructions::f_init_solwin::{FMasterLottery};
+use crate::state::{ FVault};
+use crate::errors::LotteryError;
 
 /*
  * At the moment consider:
@@ -18,9 +20,28 @@ use crate::instructions::init_master_lottery::{MasterLottery};
  * -one lottery is one lottery config (price, vault..)
  * only one price (0.1 SOL) for now
  */
-pub fn initialize_lottery(ctx: Context<InitializeLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
+pub fn f_init_lottery(ctx: Context<FInitLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
     let master_lottery = &mut ctx.accounts.master_lottery;
     let lottery = &mut ctx.accounts.lottery;
+
+      // Vault => MOVE TO LOTTERY
+        // let vault = &mut _ctx.accounts.vault;
+    let vault: &mut Account<FVault> = &mut ctx.accounts.vault;
+    vault.sol_balance = 0;
+    msg!("Enter create solwin");
+
+    // Add params for lending here (add..)
+
+   let (lottery_key, bump) = Pubkey::find_program_address(
+        &[LOTTERY_SEED, &(master_lottery.last_lottery_id + 1).to_le_bytes()],
+        ctx.program_id,
+    );
+
+    // if lottery.key != lottery_key {
+    //     return err!(LotteryError::InvalidAccount);
+    // }
+    lottery.bump = bump;
+
 
     // Initialize the last lottery id (this one)
     master_lottery.last_lottery_id += 1;
@@ -45,34 +66,48 @@ pub fn initialize_lottery(ctx: Context<InitializeLottery>, ticket_price: u64, ro
 
 // signer is payer & owner
 #[derive(Accounts)]
-pub struct InitializeLottery<'info> {
+pub struct FInitLottery<'info> {
+    #[account(
+        mut,
+        seeds = [MASTER_LOTTERY_SEED],
+        bump,
+    )]
+    pub master_lottery: Account<'info, FMasterLottery>,
+    #[account(
+        init,
+        payer = user,
+        space = 8 + 8 + 8, 
+        seeds = [
+            VAULT_SEED, 
+            &(master_lottery.last_lottery_id + 1).to_le_bytes()
+            ], 
+        bump)]
+    pub vault: Account<'info, FVault>,
     #[account(
         init,
         payer = authority,
-        space = 8 + 4 + 32 + 8 + 4 + 8 + 8,
+        space = 8 + 4 + 32 + 8 + 4 + 8 + 8 + 1,
         seeds = [LOTTERY_SEED, &(master_lottery.last_lottery_id + 1).to_le_bytes()],
         bump,
     )]
-    pub lottery: Account<'info, Lottery>,
-    #[account(
-        mut,
-        // seeds = [MASTER_LOTTERY_SEED],
-        // bump,
-    )]
-    pub master_lottery: Account<'info, MasterLottery>,
+    pub lottery: Account<'info, FLottery>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    // pub authority = Signer<'info>
 }
 
 #[account]
-pub struct Lottery {
+pub struct FLottery {
     pub id: u32,
     pub authority: Pubkey,
     pub ticket_price: u64,
     pub last_round_id: u32,
     pub round_duration: i64,
     pub round_close_slot: i64,
+    pub bump: u8,
     // add status var (up, down.. or closed)
     // add vault, strat config
 }

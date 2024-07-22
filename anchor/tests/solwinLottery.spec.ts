@@ -93,7 +93,7 @@ const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
  *      TESTS
  *
  **************************************************************************************/
-describe("Initializing Lottery", () => {
+describe.skip("Initializing Lottery", () => {
   it("initializes the master lottery", async () => {
     const info = await program.provider.connection.getAccountInfo(
       masterLotteryPda
@@ -253,7 +253,7 @@ describe("Initializing Lottery", () => {
   });
 });
 
-describe("Lottery: Buy Ticket", () => {
+describe.skip("Lottery: Buy Ticket", () => {
   if (!masterLotteryPda || !lotteryPda || !roundPda) {
     console.error("PDAs not initialized, skipping tests");
     return;

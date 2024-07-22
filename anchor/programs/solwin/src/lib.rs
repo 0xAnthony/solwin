@@ -15,6 +15,7 @@ use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 // };
 use crate::xorshift::{RngAccount};
 
+
 pub mod constants;
 pub mod errors;
 pub mod instructions;
@@ -31,7 +32,7 @@ use helpers::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("HDSscGxWMK7enBDzByJWN7TGqkL7r3WjfTL4iQ38iyYW");
+declare_id!("G1ZkRWTyM46zZQjZ1U721iRtp7Rr14fBFhR5GHGcvHZB");
 
 #[program]
 pub mod solwin {
@@ -76,6 +77,8 @@ pub mod solwin {
     pub fn withdraw_solwin(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
         instructions::withdraw(ctx, amount)
     }
+
+    
 
     /***********************************************
      * 
@@ -192,6 +195,7 @@ pub mod solwin {
      ***********************************************/
     pub fn initialize_master_lottery(ctx: Context<InitializeMasterLottery>) -> Result<()> {
         instructions::initialize_master_lottery(ctx)
+     
     }  
 
     pub fn initialize_lottery(ctx: Context<InitializeLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
@@ -209,7 +213,53 @@ pub mod solwin {
     pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
         instructions::close_round(ctx, lottery_id, round_id)
     }
+
+    /***********************************************
+     * 
+     *             FINAL VERSION
+     * 
+     ***********************************************/
+    pub fn f_initialize_solwin(ctx: Context<FInitSolwin>,metadata: InitTokenParams) -> Result<()> {
+        instructions::f_init_solwin(ctx, metadata)
+     
+    }  
+
+    pub fn f_initialize_lottery(ctx: Context<FInitLottery>, ticket_price: u64, round_duration: i64, round_close_slot: i64) -> Result<()> {
+        instructions::f_init_lottery(ctx, ticket_price, round_duration, round_close_slot)
+    }
+
+    pub fn f_initialize_round(ctx: Context<FInitRound>) -> Result<()> {
+        instructions::f_init_round(ctx)
+    }
+
+    pub fn f_deposit(ctx: Context<FDepositAndMint>, lottery_id: u32, amount: u64) -> Result<()> {
+        instructions::f_deposit_and_mint(ctx, lottery_id, amount)
+    }
+
+    pub fn f_withdraw(ctx: Context<FBurnAndWithdraw>, lottery_id: u32, amount: u64) -> Result<()> {
+        instructions::f_burn_and_withdraw(ctx, lottery_id, amount)
+    }
+    // @todo add batch take_ticket
+    pub fn f_take_ticket(ctx: Context<TakeTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::f_take_ticket(ctx, lottery_id, round_id)
+    }
+
+    pub fn f_close_round(ctx: Context<FCloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
+        instructions::f_close_round(ctx, lottery_id, round_id)
+    }
+
+    pub fn f_claim_rewards(ctx: Context<ClaimRewards>) -> Result<()> {
+        instructions::f_claim_rewards(ctx)
+    }
+    // pub fn buy_ticket(ctx: Context<BuyTicket>, lottery_id: u32, round_id: u32) -> Result<()> {
+    //     instructions::buy_ticket(ctx, lottery_id, round_id)
+    // }
+
+    // pub fn close_round(ctx: Context<CloseRound>, lottery_id: u32, round_id: u32) -> Result<()> {
+    //     instructions::close_round(ctx, lottery_id, round_id)
+    // }
 }
+
 
 
 // LENDING DATA
