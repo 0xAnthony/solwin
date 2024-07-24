@@ -16,17 +16,16 @@ import {
 import dotenv from "dotenv";
 dotenv.config();
 
-import { expect } from "@jest/globals";
 import {
   getConfig,
   getProgram,
   getBalance,
   createWalletAndAirdrop,
-  createKeypairFromSecretKey,
+  createKeyPairFromSecretKey,
 } from "./testHelper";
 // import { describe, it } from "node:test";
 // import { Console } from "console";
-import { jest } from "@jest/globals";
+import { jest, describe, it, expect } from "@jest/globals";
 // import { describe, it } from ""
 // import { describe, it } from "node:test";
 
@@ -44,7 +43,7 @@ anchor.setProvider(provider);
 const program = anchor.workspace.Solwin as Program<Solwin>;
 
 // //~/WebstormProjects/solana-program-library/owner.json
-const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
+const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
 
 // CHANGE THE SEED (+1) to test initialization of new accounts
 const MASTER_LOTTERY_SEED = "master_lottery4";
