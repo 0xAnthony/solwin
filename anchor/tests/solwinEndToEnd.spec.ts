@@ -1,33 +1,20 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-
-// import { Bank } from "../target/types/bank";
 import { Solwin } from "../target/types/solwin";
-import assert from "assert";
-
-import BN from "bn.js";
 import * as web3 from "@solana/web3.js";
-
 import {
   PublicKey,
   Keypair,
   SystemProgram,
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
-import dotenv from "dotenv";
-dotenv.config();
 
-import { expect } from "@jest/globals";
 import {
-  getConfig,
-  getProgram,
-  // getPda,
+  convertBNToStrings,
   getBalance,
   createWalletAndAirdrop,
   createKeyPairFromSecretKey,
 } from "./testHelper";
-
 import {
   seed,
   TICKET_PRICE,
@@ -36,15 +23,12 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
   metadata,
 } from "./testConstants";
-// import { describe, it } from "node:test";
-// import { Console } from "console";
-import { jest } from "@jest/globals";
-import { describe, it } from "@jest/globals";
-// import { describe } from "node:test";
-// import { describe, it } from "node:test";
-// import { describe, it } from ""
-// import { describe, it } from "node:test";
 
+import { jest, describe, it, expect } from "@jest/globals";
+import assert from "assert";
+import BN from "bn.js";
+import dotenv from "dotenv";
+dotenv.config();
 // Set 30 sec timeout for jest
 jest.setTimeout(30000);
 
@@ -70,56 +54,17 @@ const program = anchor.workspace.Solwin as Program<Solwin>;
 //~/WebstormProjects/solana-program-library/owner.json
 const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY || "");
 
-// // CHANGE THE SEED (+1) to test initialization of new accounts
-// const USER_SEED = "user36";
-
-// const MASTER_LOTTERY_SEED = "master_lottery36";
-// const LOTTERY_SEED = "lottery36";
-// const VAULT_SEED = "vault36";
-// const ROUND_SEED = "round36";
-// const TICKET_SEED = "ticket36";
-// // at the moment only one price: 0.1 SOL
-// const TICKET_PRICE = new BN(0.1 * LAMPORTS_PER_SOL);
-// // round duration time in seconds (1 day), 10 sec for testing
-// const ROUND_DURATION = new BN(10);
-// // window to close slot (to replace CRON job) in second
-// // ex: round: 24h, close slot: 10 minutes // 5 seconds for testing
-// // 2 minutes before the end of the round to be abble to catch up time if
-// // previous rounds cumulated delay
-// // incentive :
-// // ex: 25% reward at time till time + 2 minutes
-// // decreasing to 10% at t+-2minutes
-// // ponderation to be added according to late or early time on shedule
-// // min reward 5% till round is not closed
-// // const CLOSE_SLOT = new BN(600);
-// const CLOSE_SLOT = new BN(5);
-
 // INCREMENT TO TEST NEW LOTTERY (id used for theses test, rename current ?)
 const nextLotteryID = new BN(1); // default: 1
 const nextRoundID = new BN(1); // default: 1
 
 const initialLastLotteryId = 0;
 
-// // token
-// const MINT_SEED = "mint36";
-// const METADATA_SEED = "metadata";
-// // default metaplex token metadata program
-// // https://metaplex-foundation.github.io/metaplex-program-library/docs/token-metadata/index.html#accountProviders.__type.Metadata
-// const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey(
-//   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
-// );
-
-// const metadata = {
-//   name: "SolWin liquid SOL Token",
-//   symbol: "swSOL",
-//   uri: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png", //"https://arweave.net/Xjqaj_rYYQGrsiTk9JRqpguA813w6NGPikcRyA1vAHM",
-//   decimals: 9,
-// };
 const mintAmount = 10;
 const burnAmount = 5;
 
 // PDAs
-const [masterLotteryPda, curMasterLotteryBump] =
+const [masterLotteryPda, masterLotteryBump] =
   anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from(seed.MASTER_LOTTERY_SEED)],
     program.programId
@@ -141,12 +86,12 @@ const [lotteryPda, curLotteryBump] =
 
 // const [lotteryPda, lotteryBump] = getPda("lottery", LOTTERY_SEED, newLotteryID);
 
-const [roundPda, curRoundBump] = anchor.web3.PublicKey.findProgramAddressSync(
+const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
   [Buffer.from(seed.ROUND_SEED), nextRoundID.toArrayLike(Buffer, "le", 4)],
   program.programId
 );
 
-const [VaultPda, curVaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
+const [vaultPda, vaultBump] = anchor.web3.PublicKey.findProgramAddressSync(
   [Buffer.from(seed.VAULT_SEED), nextLotteryID.toArrayLike(Buffer, "le", 4)],
   program.programId
 );
@@ -165,6 +110,71 @@ const [metadataPDA, bumpPDA] = web3.PublicKey.findProgramAddressSync(
   TOKEN_METADATA_PROGRAM_ID
 );
 
+// @todo export
+// manage types: program : anchor.Program<Solwin> and anchor
+
+//return [pda, bump]
+const getGamePda = (seedString: string, seedIndex: anchor.BN) => {
+  return anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from(seedString), seedIndex.toArrayLike(Buffer, "le", 4)],
+    program.programId
+  );
+};
+
+const getLastLotteryId = async () => {
+  const info = await program.provider.connection.getAccountInfo(
+    masterLotteryPda
+  );
+
+  if (!info) {
+    console.error("masterLotteryPda not found. IT SHOULD BE INITIALIZED!");
+    return;
+  }
+
+  let masterLotteryData = await program.account.fMasterLottery.fetch(
+    masterLotteryPda
+  );
+  const lastLotteryId = masterLotteryData.lastLotteryId;
+  return lastLotteryId;
+};
+
+const checkPdaIsNotInit = async (pda, pdaType) => {
+  let info = await program.provider.connection.getAccountInfo(pda);
+  if (info) {
+    // SHOULDN'T PASS HERE
+    console.error(`${pdaType} Pda found, IT SHOULDN'T!.`);
+    let pdaData = await program.account[pdaType].fetch(pda);
+    console.log(`${pdaType} pda info: `, info);
+    console.log(`${pdaType} pda data: `, convertBNToStrings(pdaData));
+    // return;
+    throw `This Pda (${pdaType}) is not expected to be initialized`;
+  }
+};
+
+const checkPdaIsInit = async (pda, pdaType) => {
+  let info = await program.provider.connection.getAccountInfo(pda);
+  if (info) {
+    console.log(`${pdaType} Pda found:`);
+    let newVaultData = await program.account[pdaType].fetch(pda);
+    console.log(`${pdaType} info: `, info);
+    console.log(`${pdaType} data: `, convertBNToStrings(newVaultData));
+  } else {
+    // console.error(`${pdaType} Pda not found. something wrong...`);
+    throw `${pdaType} Pda not found. something wrong...`;
+  }
+};
+
+const confirmAndShowTx = async (action: string, txHash: string) => {
+  try {
+    await program.provider.connection.confirmTransaction(txHash, "finalized");
+  } catch (e) {
+    const errMsg = `Error with: ${action}:\n`;
+    console.log(errMsg, e);
+  }
+  console.log(
+    `${action} tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
+  );
+};
 /*************************************************************************************
  *
  *      TESTS
@@ -173,16 +183,19 @@ const [metadataPDA, bumpPDA] = web3.PublicKey.findProgramAddressSync(
 describe("Initializing Lottery", () => {
   it("initializes the master lottery", async () => {
     const info = await program.provider.connection.getAccountInfo(
-      curMasterLotteryPda
+      masterLotteryPda
     );
 
     if (info) {
       console.log(`masterLottery Pda found, skipping initialization.`);
       let masterLotteryData = await program.account.fMasterLottery.fetch(
-        curMasterLotteryPda
+        masterLotteryPda
       );
       console.log(`masterLottery info: `, info);
-      console.log(`masterLottery data: `, masterLotteryData);
+      console.log(
+        `masterLottery data: `,
+        convertBNToStrings(masterLotteryData)
+      );
       return;
     }
     console.log("masterLottery Pda not found. Initializing Account...");
@@ -192,7 +205,7 @@ describe("Initializing Lottery", () => {
       .accounts({
         user: owner.publicKey,
         system_program: web3.SystemProgram.programId,
-        master_lottery: curMasterLotteryPda,
+        master_lottery: masterLotteryPda,
         metadata: metadataPDA,
         mint: mintAccount,
         payer: owner.publicKey,
@@ -210,17 +223,10 @@ describe("Initializing Lottery", () => {
         skipPreflight: true,
       });
 
-    try {
-      await program.provider.connection.confirmTransaction(txHash, "finalized");
-    } catch (e) {
-      console.log("Error when initializing masterLottery: ", e);
-    }
-    console.log(
-      `masterLottery initialization tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
-    );
+    await confirmAndShowTx("masterLottery initialization", txHash);
 
     let masterLotteryData = await program.account.fMasterLottery.fetch(
-      curMasterLotteryPda
+      masterLotteryPda
     );
     console.log(
       "masterLottery Pda data after initialization: ",
@@ -234,66 +240,28 @@ describe("Initializing Lottery", () => {
     assert(newInfo, "  Mint should be initialized.");
   });
 
-  it("initializes the lottery", async () => {
-    let info = await program.provider.connection.getAccountInfo(
-      curMasterLotteryPda
-    );
-
-    if (!info) {
-      console.error("masterLotteryPda not found. NEED INITIALIZATION");
-      return;
-    }
-
-    let masterLotteryData = await program.account.fMasterLottery.fetch(
-      curMasterLotteryPda
-    );
-    const lastLotteryId = masterLotteryData.lastLotteryId;
-    // const newLotteryId = lastLotteryId + 1;
-    // console.log(
-    //   `lastLotteryId: ${lastLotteryId} => new id for initialization: ${newLotteryId}`
-    // );
+  it("initializes a new lottery", async () => {
+    const lastLotteryId: any = await getLastLotteryId();
     const newLotteryId = new BN(lastLotteryId + 1);
     console.log(
       `lastLotteryId: ${lastLotteryId} => new id for initialization: ${newLotteryId}`
     );
 
-    const [newLotteryPda, lotteryBump] =
-      anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from(seed.LOTTERY_SEED),
-          newLotteryId.toArrayLike(Buffer, "le", 4),
-        ],
-        program.programId
-      );
+    const [newLotteryPda] = getGamePda(seed.LOTTERY_SEED, newLotteryId);
+    await checkPdaIsNotInit(newLotteryPda, "fLottery");
 
-    info = await program.provider.connection.getAccountInfo(newLotteryPda);
-
-    if (info) {
-      console.log(`Lottery Pda found, skipping initialization.`);
-      let newLotteryPdaData = await program.account.fLottery.fetch(
-        newLotteryPda
-      );
-      console.log(`Lottery info: `, info);
-      console.log(`Lottery data: `, newLotteryPda);
-      return;
-    }
-    // info = await program.provider.connection.getAccountInfo(lotteryPda);
-
-    // if (info) {
-    //   console.log(`Lottery Pda found, skipping initialization.`);
-    //   let lotteryPdaData = await program.account.fLottery.fetch(lotteryPda);
-    //   console.log(`Lottery info: `, info);
-    //   console.log(`Lottery data: `, lotteryPdaData);
-    //   return;
-    // }
-    console.log("  lottery Pda not found. Initializing account...");
+    const [newVaultPda] = getGamePda(seed.VAULT_SEED, newLotteryId);
+    await checkPdaIsNotInit(newVaultPda, "fVault");
+    console.log(
+      "Vault and lottery Pda not found as expected. Initializing accounts..."
+    );
 
     const txHash = await program.methods
       .fInitializeLottery(TICKET_PRICE, ROUND_DURATION, CLOSE_SLOT)
       .accounts({
-        lottery: newLotteryPda, //lotteryPda,
+        lottery: newLotteryPda,
         master_lottery: masterLotteryPda,
-        vault: vaultPda,
+        vault: newVaultPda,
         authority: owner.publicKey,
         system_program: web3.SystemProgram.programId,
         user: owner.publicKey,
@@ -301,40 +269,17 @@ describe("Initializing Lottery", () => {
       .signers([owner])
       .rpc();
 
-    try {
-      await program.provider.connection.confirmTransaction(txHash, "finalized");
-    } catch (e) {
-      console.log("Error when initializing lottery: ", e);
-    }
-    console.log(
-      `lottery initialization tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
-    );
+    await confirmAndShowTx("lottery initialization", txHash);
 
     let newLotteryData = await program.account.fLottery.fetch(newLotteryPda);
-    console.log("lottery Pda data after initialization: ", newLotteryData);
-
-    const [newVaultPda, vaultBump] =
-      anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from(seed.VAULT_SEED),
-          newLotteryID.toArrayLike(Buffer, "le", 4),
-        ],
-        program.programId
-      );
-
-    let newVaultInfo = await program.provider.connection.getAccountInfo(
-      newVaultPda
+    console.log(
+      "lottery Pda data after initialization: ",
+      convertBNToStrings(newLotteryData)
     );
-    if (newVaultInfo) {
-      console.log(`vault Pda found:`);
-      let newVaultData = await program.account.fVault.fetch(newVaultPda);
-      console.log(`vault info: `, newVaultInfo);
-      console.log(`vault data: `, newVaultData);
-    } else {
-      console.log("vault Pda not found. something wrong...");
-    }
 
-    expect(newLotteryData.id).toEqual(newLotteryId);
+    await checkPdaIsInit(newVaultPda, "fVault");
+
+    expect(newLotteryData.id.toString()).toEqual(newLotteryId.toString());
     expect(newLotteryData.lastRoundId.toString()).toEqual("0");
     expect(newLotteryData.ticketPrice.toString()).toEqual(
       TICKET_PRICE.toString()
@@ -342,48 +287,39 @@ describe("Initializing Lottery", () => {
   });
 
   it("initializes the lottery round", async () => {
-    let lotteryData = await program.account.fLottery.fetch(lotteryPda);
+    const currentLotteryId: any = await getLastLotteryId();
+    console.log(`currentLotteryId: ${currentLotteryId}`);
+
+    const [currentLotteryPda] = getGamePda(
+      seed.LOTTERY_SEED,
+      new BN(currentLotteryId)
+    );
+
+    await checkPdaIsInit(currentLotteryPda, "fLottery");
+
+    let lotteryData = await program.account.fLottery.fetch(currentLotteryPda);
     const lastRoundId = lotteryData.lastRoundId;
     const newRoundId = lastRoundId + 1;
     console.log(
       `lastRoundId: ${lastRoundId} => new id for initialization: ${newRoundId}`
     );
 
-    let info = await program.provider.connection.getAccountInfo(lotteryPda);
+    const [newRoundPda] = getGamePda(seed.ROUND_SEED, new BN(newRoundId));
+    await checkPdaIsNotInit(newRoundPda, "fRound");
 
-    if (!info) {
-      console.error("lotteryPda not found. NEED INITIALIZATION");
-      return;
-    }
-    info = await program.provider.connection.getAccountInfo(roundPda);
-
-    if (info) {
-      console.log(`Lottery Pda found, skipping initialization.`);
-      let roundPdaData = await program.account.fRound.fetch(roundPda);
-      console.log(`round info: `, info);
-      console.log(`round data: `, roundPdaData);
-      return;
-    }
     console.log("round Pda not found. Initializing account...");
 
     const txHash = await program.methods
       .fInitializeRound()
       .accounts({
-        round: roundPda,
-        lottery: lotteryPda,
+        round: newRoundPda,
+        lottery: currentLotteryPda,
         authority: owner.publicKey,
         system_program: SystemProgram.programId,
       } as any)
       .rpc();
 
-    try {
-      await program.provider.connection.confirmTransaction(txHash, "finalized");
-    } catch (e) {
-      console.log("Error when initializing round: ", e);
-    }
-    console.log(
-      `round initialization tx: https://explorer.solana.com/tx/${txHash}?cluster=devnet`
-    );
+    confirmAndShowTx("round initialization", txHash);
 
     let roundData = await program.account.fRound.fetch(roundPda);
     console.log("round Pda data after initialization: ", roundData);
@@ -439,7 +375,7 @@ describe("Lottery: Deposit and Withdraw", () => {
       anchor.web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(seed.USER_SEED),
-          newLotteryID.toArrayLike(Buffer, "le", 4),
+          nextLotteryID.toArrayLike(Buffer, "le", 4),
           owner.publicKey.toBuffer(),
         ],
         program.programId
@@ -460,7 +396,7 @@ describe("Lottery: Deposit and Withdraw", () => {
     }
 
     const txHash = await program.methods
-      .fDeposit(newLotteryID, amountToDeposit)
+      .fDeposit(nextLotteryID, amountToDeposit)
       .accounts({
         lottery: lotteryPda,
         vault: vaultPda,
@@ -571,7 +507,7 @@ describe("Lottery: Deposit and Withdraw", () => {
       anchor.web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(seed.USER_SEED),
-          newLotteryID.toArrayLike(Buffer, "le", 4),
+          nextLotteryID.toArrayLike(Buffer, "le", 4),
           owner.publicKey.toBuffer(),
         ],
         program.programId
@@ -597,7 +533,7 @@ describe("Lottery: Deposit and Withdraw", () => {
     }
 
     const txHash = await program.methods
-      .fWithdraw(newLotteryID, amountToWithdraw)
+      .fWithdraw(nextLotteryID, amountToWithdraw)
       .accounts({
         lottery: lotteryPda,
         vault: vaultPda,
@@ -701,7 +637,7 @@ describe("Lottery: Take Ticket", () => {
       anchor.web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(seed.USER_SEED),
-          newLotteryID.toArrayLike(Buffer, "le", 4),
+          nextLotteryID.toArrayLike(Buffer, "le", 4),
           owner.publicKey.toBuffer(),
         ],
         program.programId
@@ -713,7 +649,7 @@ describe("Lottery: Take Ticket", () => {
     console.log("Credits in user data before taking a ticket: ", creditsBefore);
 
     const txHash = await program.methods
-      .fTakeTicket(newLotteryID, newRoundID)
+      .fTakeTicket(nextLotteryID, nextRoundID)
       .accounts({
         lottery: lotteryPda,
         round: roundPda,
@@ -819,7 +755,7 @@ describe("Lottery: Close Round", () => {
       anchor.web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from(seed.USER_SEED),
-          newLotteryID.toArrayLike(Buffer, "le", 4),
+          nextLotteryID.toArrayLike(Buffer, "le", 4),
           owner.publicKey.toBuffer(),
         ],
         program.programId
@@ -831,7 +767,7 @@ describe("Lottery: Close Round", () => {
     console.log("Credits in user data before taking a ticket: ", creditsBefore);
 
     const txHash = await program.methods
-      .fCloseRound(newLotteryID, newRoundID)
+      .fCloseRound(nextLotteryID, nextRoundID)
       .accounts({
         lottery: lotteryPda,
         round: roundPda,

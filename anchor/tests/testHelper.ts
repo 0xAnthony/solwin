@@ -12,39 +12,22 @@ import {
 import dotenv from "dotenv";
 dotenv.config();
 
-// const program = anchor.workspace.Solwin as Program<Solwin>;
-
-// let seedVaultCounter = 8;
-
-// export const getSeedVaultCounter = () => {
-//   return seedVaultCounter;
-// };
-
-// ??
-
-// return [pda, bump]
-// const getPda = (type: String, seed: String, index?: anchor.BN) => {
-//   let seeds;
-//   if (type == "masterLottery") {
-//     seeds = [Buffer.from(seed)];
-//   } else {
-//     seeds = [Buffer.from(seed), index.toArrayLike(Buffer, "le", 4)];
-//   }
-//   return anchor.web3.PublicKey.findProgramAddressSync(
-//     [...seeds],
-//     program.programId
-//   );
-// return [pda, bump];
-// };
+// CONFIG
 
 const getProgram = (T: any) => {
   return anchor.workspace[T] as Program<typeof T>;
 };
 
-const getBalance = async (provider: Provider, publicKey: PublicKey) => {
-  const balance = await provider.connection.getBalance(publicKey);
-  return balance;
+const getConfig = async () => {
+  const provider = anchor.AnchorProvider.env();
+
+  const program = anchor.workspace.Solwin as Program<Solwin>;
+
+  const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
+  return { provider, program, owner };
 };
+
+// keyPair & Wallet
 
 const createWalletAndAirdrop = async (
   program: Program,
@@ -59,39 +42,53 @@ const createWalletAndAirdrop = async (
   return wallet;
 };
 
-//  function createKeypairFromSecretKey(secretKey: string): Keypair {
-//     const secretKeyArray = JSON.parse(secretKey);
-//     const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
-//     return Keypair.fromSecretKey(secretKeyUint8Array);
-//  }
+type createKeyPair = (secrete: string) => anchor.web3.Keypair;
 
-const createKeyPairFromSecretKey = (secretKey: string) => {
+const createKeyPairFromSecretKey: createKeyPair = (secretKey: string) => {
   const secretKeyArray = JSON.parse(secretKey);
   const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
   return Keypair.fromSecretKey(secretKeyUint8Array);
 };
 
-// config
-const getConfig = async () => {
-  const provider = anchor.AnchorProvider.env();
+// Balances
 
-  const program = anchor.workspace.Solwin as Program<Solwin>;
-
-  const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
-  return { provider, program, owner };
+const getBalance = async (provider: Provider, publicKey: PublicKey) => {
+  const balance = await provider.connection.getBalance(publicKey);
+  return balance;
 };
-// module.exports = {
-//   getProgram,
-//   getBalance,
-//   createWalletAndAirdrop,
-//   createKeypairFromSecretKey,
-//   provider,
-//   program,
-//   owner,
-// };
+
+// Utils
+
+function convertBNToStrings(obj) {
+  const convert = (input) => {
+    if (Array.isArray(input)) {
+      return input.map(convert);
+    }
+
+    if (input && typeof input === "object") {
+      const newObj = {};
+      for (const key in input) {
+        if (input.hasOwnProperty(key)) {
+          if (
+            typeof input[key] === "object" &&
+            input[key] instanceof anchor.BN
+          ) {
+            newObj[key] = input[key].toString();
+          } else {
+            newObj[key] = convert(input[key]);
+          }
+        }
+      }
+      return newObj;
+    }
+    return input;
+  };
+  return convert(obj);
+}
+
 export {
+  convertBNToStrings,
   getProgram,
-  // getPda,
   getBalance,
   createWalletAndAirdrop,
   createKeyPairFromSecretKey,

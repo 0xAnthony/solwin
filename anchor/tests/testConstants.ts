@@ -1,22 +1,23 @@
 import BN from "bn.js";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
+// increment these seeds and in constants.rs to force a new programId
 const seed = {
-  USER_SEED: "user36",
-
-  MASTER_LOTTERY_SEED: "master_lottery36",
-  LOTTERY_SEED: "lottery36",
-  VAULT_SEED: "vault36",
-  ROUND_SEED: "round36",
-  TICKET_SEED: "ticket36",
-  MINT_SEED: "mint36",
+  USER_SEED: "user37",
+  MASTER_LOTTERY_SEED: "master_lottery37",
+  LOTTERY_SEED: "lottery37",
+  VAULT_SEED: "vault37",
+  ROUND_SEED: "round37",
+  TICKET_SEED: "ticket37",
+  MINT_SEED: "mint37",
   METADATA_SEED: "metadata",
 };
-
 // at the moment only one price: 0.1 SOL
 const TICKET_PRICE = new BN(0.1 * LAMPORTS_PER_SOL);
-// round duration time in seconds (1 day), 10 sec for testing
+// round duration time in seconds (1 day), 10 sec for POC & testing
 const ROUND_DURATION = new BN(10);
+// window to close round around target : round start + ROUND_DURATION
+// solution to replace CRON job till a solution for compilation
 // window to close slot (to replace CRON job) in second
 // ex: round: 24h, close slot: 10 minutes // 5 seconds for testing
 // 2 minutes before the end of the round to be abble to catch up time if
