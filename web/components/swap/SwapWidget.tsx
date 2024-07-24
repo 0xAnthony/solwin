@@ -1,8 +1,16 @@
 import {useGetBalance, useGetTokenAccounts} from "@/components/account/account-data-access";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
-import {useMemo, useState} from "react";
-import {LOTTERY_SEED, MINT_SEED, ROUND_SEED, SWSOL_MINTER, USER_SEED, VAULT_SEED} from "@/constants";
+import {useEffect, useMemo, useState} from "react";
+import {
+    LOTTERY_SEED,
+    MASTER_LOTTERY_SEED,
+    MINT_SEED,
+    ROUND_SEED,
+    SWSOL_MINTER,
+    USER_SEED,
+    VAULT_SEED
+} from "@/constants";
 import {Program} from "@coral-xyz/anchor";
 import idl from "@/idl.json";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
@@ -10,6 +18,7 @@ import * as anchor from "@coral-xyz/anchor";
 import toast from "react-hot-toast";
 import {ClaimTickets} from "@/components/lottery/ClaimTickets";
 import {CloseRound} from "@/components/lottery/CloseRound";
+import {seed} from "../../../anchor/tests/testConstants";
 
 const valueToUi = (value) => {
     return Math.round((value / LAMPORTS_PER_SOL) * 100000) / 100000
@@ -22,6 +31,15 @@ export const SwapWidget = () => {
     const canClose = false;
     const [action, setAction] = useState("deposit");
     const [inputValue, setInputValue] = useState("");
+    const [lastLotteryId, setLastLotteryId] = useState(0);
+
+    const program = new Program(idl, provider);
+
+    const [masterLotteryPda, masterLotteryBump] =
+        anchor.web3.PublicKey.findProgramAddressSync(
+            [Buffer.from(MASTER_LOTTERY_SEED)],
+            program.programId
+        );
 
     const setActionDeposit = () => {
         setInputValue("")
@@ -46,9 +64,6 @@ export const SwapWidget = () => {
     }
 
     const newLotteryID = new anchor.BN(1);
-
-    const program = new Program(idl, provider);
-
     const newRoundID = new anchor.BN(2);
 
     const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -107,6 +122,24 @@ export const SwapWidget = () => {
 
         return res
         }, [tokenAccounts]);
+
+
+    const getLastLotteryId = async () => {
+        const info = await program.provider.connection.getAccountInfo(
+            masterLotteryPda
+        );
+
+        if (!info) {
+            console.error("masterLotteryPda not found. IT SHOULD BE INITIALIZED!");
+            return;
+        }
+
+        let masterLotteryData = await program.account.fMasterLottery.fetch(
+            masterLotteryPda
+        );
+        const lastLotteryId = masterLotteryData.lastLotteryId;
+        return lastLotteryId;
+    };
 
     const submit = async () => {
         if (!address || !provider) {
@@ -167,8 +200,21 @@ export const SwapWidget = () => {
 
     }
 
+    useEffect(() => {
+        let fetchData = async () => {
+            if (masterLotteryPda){
+                let lastLotteryId = await getLastLotteryId().catch(console.error);
+                setLastLotteryId(lastLotteryId)
+            }
+        }
+
+        fetchData()
+    }, [masterLotteryPda]);
+
+
     return (
         <div className="card bg-base-100 w-96 shadow-xl">
+            Last Lottery Id : {lastLotteryId}
             <div className="card-body gap-8">
                 <div role="tablist" className="tabs tabs-lifted tabs-lg">
                     <a role="tab" className={`tab ${action === "deposit" && 'tab-active'}`} onClick={setActionDeposit}>Deposit</a>

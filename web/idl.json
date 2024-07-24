@@ -1,5 +1,5 @@
 {
-  "address": "FsGG23j6WiDHA3sGdH6WL4Mt6kyi7qVNVU87yc1tVgAo",
+  "address": "FLVEEeCy97QYdmu6iuYKFTcNhtrZdH7bAbUae48jkBdY",
   "metadata": {
     "name": "solwin",
     "version": "0.1.0",
@@ -42,7 +42,7 @@
                   101,
                   114,
                   51,
-                  54
+                  55
                 ]
               },
               {
@@ -75,7 +75,7 @@
                   110,
                   116,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -233,7 +233,7 @@
                   101,
                   114,
                   51,
-                  54
+                  55
                 ]
               },
               {
@@ -312,7 +312,7 @@
                   101,
                   114,
                   51,
-                  54
+                  55
                 ]
               },
               {
@@ -345,7 +345,7 @@
                   110,
                   116,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -510,7 +510,7 @@
                   114,
                   121,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -632,7 +632,7 @@
                   114,
                   121,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -658,7 +658,7 @@
                   110,
                   116,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -774,7 +774,7 @@
                   108,
                   116,
                   51,
-                  54
+                  55
                 ]
               },
               {
@@ -803,7 +803,7 @@
                   101,
                   114,
                   51,
-                  54
+                  55
                 ]
               },
               {
@@ -836,7 +836,7 @@
                   110,
                   116,
                   51,
-                  54
+                  55
                 ]
               }
             ]
@@ -1069,58 +1069,8 @@
   "errors": [
     {
       "code": 6000,
-      "name": "WinnerAlreadyExists",
-      "msg": "Winner already exists"
-    },
-    {
-      "code": 6001,
-      "name": "RoundNotOpen",
-      "msg": "Round not open"
-    },
-    {
-      "code": 6002,
-      "name": "InvalidLotteryId",
-      "msg": "Invalid lottery id"
-    },
-    {
-      "code": 6003,
-      "name": "InvalidRoundId",
-      "msg": "Invalid round id"
-    },
-    {
-      "code": 6004,
-      "name": "RoundNotCloseable",
-      "msg": "Round not closeable"
-    },
-    {
-      "code": 6005,
-      "name": "InvalidAccount",
-      "msg": "Invalid lottery account"
-    },
-    {
-      "code": 6006,
-      "name": "NotUserDataOWner",
-      "msg": "Signer not user data owner"
-    },
-    {
-      "code": 6007,
-      "name": "NotEnoughCredits",
-      "msg": "Not enough credits"
-    },
-    {
-      "code": 6008,
-      "name": "WinnerDataNotFound",
-      "msg": "Winner Data Not Found"
-    },
-    {
-      "code": 6009,
-      "name": "RoundCreationFailed",
-      "msg": "Round Creation Failed"
-    },
-    {
-      "code": 6010,
-      "name": "WinnerTicketNotFound",
-      "msg": "Winner Ticket Not Found"
+      "name": "SeedEqualZero",
+      "msg": "Seed must be non-zero"
     }
   ],
   "types": [

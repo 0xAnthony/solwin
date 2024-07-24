@@ -64,10 +64,7 @@ export const ClaimTickets = ({swBalance, program, lotteryPda, userDataPda, round
                 });
         }
 
-        // call the function
-        fetchData()
-            // make sure to catch any error
-            .catch(console.error);
+        fetchData().catch(console.error);
     }, [])
 
     const claimTickets = async () => {
