@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import {Program, Provider} from "@coral-xyz/anchor";
+import { Program, Provider } from "@coral-xyz/anchor";
 // import { Bank } from "../target/types/bank";
 import { Solwin } from "../target/types/solwin";
 import {
@@ -12,21 +12,22 @@ import {
 import dotenv from "dotenv";
 dotenv.config();
 
-// let seedVaultCounter = 8;
+// CONFIG
 
-// export const getSeedVaultCounter = () => {
-//   return seedVaultCounter;
-// };
-
-// ??
 const getProgram = (T: any) => {
   return anchor.workspace[T] as Program<typeof T>;
 };
 
-const getBalance = async (provider: Provider, publicKey: PublicKey) => {
-  const balance = await provider.connection.getBalance(publicKey);
-  return balance;
+const getConfig = async () => {
+  const provider = anchor.AnchorProvider.env();
+
+  const program = anchor.workspace.Solwin as Program<Solwin>;
+
+  const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
+  return { provider, program, owner };
 };
+
+// keyPair & Wallet
 
 const createWalletAndAirdrop = async (
   program: Program,
@@ -41,40 +42,55 @@ const createWalletAndAirdrop = async (
   return wallet;
 };
 
-//  function createKeypairFromSecretKey(secretKey: string): Keypair {
-//     const secretKeyArray = JSON.parse(secretKey);
-//     const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
-//     return Keypair.fromSecretKey(secretKeyUint8Array);
-//  }
+type createKeyPair = (secrete: string) => anchor.web3.Keypair;
 
-const createKeypairFromSecretKey = (secretKey: string) => {
+const createKeyPairFromSecretKey: createKeyPair = (secretKey: string) => {
   const secretKeyArray = JSON.parse(secretKey);
   const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
   return Keypair.fromSecretKey(secretKeyUint8Array);
 };
 
-// config
-const getConfig = async () => {
-  const provider = anchor.AnchorProvider.env();
+// Balances
 
-  const program = anchor.workspace.Solwin as Program<Solwin>;
-
-  const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
-  return { provider, program, owner };
+const getBalance = async (provider: Provider, publicKey: PublicKey) => {
+  const balance = await provider.connection.getBalance(publicKey);
+  return balance;
 };
-// module.exports = {
-//   getProgram,
-//   getBalance,
-//   createWalletAndAirdrop,
-//   createKeypairFromSecretKey,
-//   provider,
-//   program,
-//   owner,
-// };
+
+// Utils
+
+function convertBNToStrings(obj) {
+  const convert = (input) => {
+    if (Array.isArray(input)) {
+      return input.map(convert);
+    }
+
+    if (input && typeof input === "object") {
+      const newObj = {};
+      for (const key in input) {
+        if (input.hasOwnProperty(key)) {
+          if (
+            typeof input[key] === "object" &&
+            input[key] instanceof anchor.BN
+          ) {
+            newObj[key] = input[key].toString();
+          } else {
+            newObj[key] = convert(input[key]);
+          }
+        }
+      }
+      return newObj;
+    }
+    return input;
+  };
+  return convert(obj);
+}
+
 export {
+  convertBNToStrings,
   getProgram,
   getBalance,
   createWalletAndAirdrop,
-  createKeypairFromSecretKey,
+  createKeyPairFromSecretKey,
   getConfig,
 };
