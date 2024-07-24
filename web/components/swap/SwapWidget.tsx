@@ -2,7 +2,7 @@ import {useGetBalance, useGetTokenAccounts} from "@/components/account/account-d
 import {useWallet} from "@solana/wallet-adapter-react";
 import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {useMemo, useState} from "react";
-import {SWSOL_MINTER} from "@/constants";
+import {LOTTERY_SEED, MINT_SEED, ROUND_SEED, SWSOL_MINTER, USER_SEED, VAULT_SEED} from "@/constants";
 import {Program} from "@coral-xyz/anchor";
 import idl from "@/idl.json";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
@@ -49,13 +49,7 @@ export const SwapWidget = () => {
 
     const program = new Program(idl, provider);
 
-    const USER_SEED = "user32";
-    const MINT_SEED = "mint32";
-    const LOTTERY_SEED = "lottery32";
-    const VAULT_SEED = "vault32";
-    const ROUND_SEED = "round36";
-
-    const newRoundID = new anchor.BN(1);
+    const newRoundID = new anchor.BN(2);
 
     const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(ROUND_SEED), newRoundID.toArrayLike(Buffer, "le", 4)],
@@ -124,7 +118,6 @@ export const SwapWidget = () => {
                 mint: mintAccount,
                 owner: wallet.publicKey,
             });
-
             let value = parseFloat(inputValue) * LAMPORTS_PER_SOL;
             let bnValue = new anchor.BN(value);
 
@@ -167,7 +160,8 @@ export const SwapWidget = () => {
             }
             setInputValue("");
             toast.success("Transaction success !")
-        } catch {
+        } catch (e) {
+            console.log(e)
             toast.error("An error occured");
         }
 

@@ -4,13 +4,12 @@ import idl from "@/idl.json";
 import * as anchor from "@coral-xyz/anchor";
 import {useAnchorProvider} from "@/components/solana/solana-provider";
 import {useWallet} from "@solana/wallet-adapter-react";
+import {ROUND_SEED} from "@/constants";
 
 export const CloseRound = ({canClose, program, lotteryPda, userDataPda, roundPda}) => {
     const wallet = useWallet();
 
     const closeRound = async () => {
-        const ROUND_SEED = "round36";
-
         const newLotteryID = new anchor.BN(1);
         const newRoundID = new anchor.BN(1);
         const nextRoundID = new anchor.BN(newRoundID + 1)
