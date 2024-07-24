@@ -1,6 +1,6 @@
 import {useGetBalance, useGetTokenAccounts} from "@/components/account/account-data-access";
 import {useWallet} from "@solana/wallet-adapter-react";
-import {clusterApiUrl, Connection, LAMPORTS_PER_SOL} from "@solana/web3.js";
+import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 import {useMemo, useState} from "react";
 import {SWSOL_MINTER} from "@/constants";
 import {Program} from "@coral-xyz/anchor";
@@ -104,7 +104,6 @@ export const SwapWidget = () => {
         let swSol = tokenAccounts.find(x => x.account.data.parsed.info.mint === SWSOL_MINTER);
 
         let res = {
-            wSolBalance: undefined,
             swSolBalance: undefined
         }
 
