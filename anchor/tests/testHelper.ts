@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import {Program, Provider} from "@coral-xyz/anchor";
+import { Program, Provider } from "@coral-xyz/anchor";
 // import { Bank } from "../target/types/bank";
 import { Solwin } from "../target/types/solwin";
 import {
@@ -12,6 +12,8 @@ import {
 import dotenv from "dotenv";
 dotenv.config();
 
+// const program = anchor.workspace.Solwin as Program<Solwin>;
+
 // let seedVaultCounter = 8;
 
 // export const getSeedVaultCounter = () => {
@@ -19,6 +21,22 @@ dotenv.config();
 // };
 
 // ??
+
+// return [pda, bump]
+// const getPda = (type: String, seed: String, index?: anchor.BN) => {
+//   let seeds;
+//   if (type == "masterLottery") {
+//     seeds = [Buffer.from(seed)];
+//   } else {
+//     seeds = [Buffer.from(seed), index.toArrayLike(Buffer, "le", 4)];
+//   }
+//   return anchor.web3.PublicKey.findProgramAddressSync(
+//     [...seeds],
+//     program.programId
+//   );
+// return [pda, bump];
+// };
+
 const getProgram = (T: any) => {
   return anchor.workspace[T] as Program<typeof T>;
 };
@@ -47,7 +65,7 @@ const createWalletAndAirdrop = async (
 //     return Keypair.fromSecretKey(secretKeyUint8Array);
 //  }
 
-const createKeypairFromSecretKey = (secretKey: string) => {
+const createKeyPairFromSecretKey = (secretKey: string) => {
   const secretKeyArray = JSON.parse(secretKey);
   const secretKeyUint8Array = Uint8Array.from(secretKeyArray);
   return Keypair.fromSecretKey(secretKeyUint8Array);
@@ -59,7 +77,7 @@ const getConfig = async () => {
 
   const program = anchor.workspace.Solwin as Program<Solwin>;
 
-  const owner = createKeypairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
+  const owner = createKeyPairFromSecretKey(process.env.OWNER_PRIVATE_KEY!);
   return { provider, program, owner };
 };
 // module.exports = {
@@ -73,8 +91,9 @@ const getConfig = async () => {
 // };
 export {
   getProgram,
+  // getPda,
   getBalance,
   createWalletAndAirdrop,
-  createKeypairFromSecretKey,
+  createKeyPairFromSecretKey,
   getConfig,
 };
