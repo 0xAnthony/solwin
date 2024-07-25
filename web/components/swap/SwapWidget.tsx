@@ -213,7 +213,7 @@ export const SwapWidget = () => {
 
 
     return (
-        <div className="card bg-base-100 w-96 shadow-xl">
+        <div className="card bg-base-100 w-96 shadow-xl pb-4">
             <div className="card-body gap-8">
                 <div role="tablist" className="tabs tabs-lifted tabs-lg">
                     <a role="tab" className={`tab ${action === "deposit" && 'tab-active'}`} onClick={setActionDeposit}>Deposit</a>
@@ -251,10 +251,11 @@ export const SwapWidget = () => {
                 />
             </div>
 
-            <p>Last Lottery Id : {lastLotteryId.toString()}</p>
-            <p>Current User Credits : {userCredit / LAMPORTS_PER_SOL}</p>
-            <p>Ticket price : 0.1 Credit</p>
-
+            <div className="text-center">
+                <p>Last Lottery Id : {lastLotteryId.toString()}</p>
+                <p>Current User Credits : {userCredit / LAMPORTS_PER_SOL}</p>
+                <p>Ticket price : 0.1 Credit</p>
+            </div>
         </div>
 );
 };

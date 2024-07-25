@@ -122,8 +122,7 @@ export const Introduction = () => {
                                         clipRule="evenodd" />
                                 </svg>
                             </div>
-                            {!!(index % 2) && <div className="timeline-end timeline-box">
-                                {completed && "Hi"} {text}</div>}
+                            {!!(index % 2) && <div className="timeline-end timeline-box">{text}</div>}
                             {index < steps.length - 1 &&  <hr className={`${completed && "bg-primary"}`}/>}
                         </li>
                     ))}
