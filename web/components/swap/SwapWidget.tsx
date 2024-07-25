@@ -31,7 +31,8 @@ export const SwapWidget = () => {
     const canClose = false;
     const [action, setAction] = useState("deposit");
     const [inputValue, setInputValue] = useState("");
-    const [lastLotteryId, setLastLotteryId] = useState(0);
+    const [lastLotteryId, setLastLotteryId] = useState(new anchor.BN(0));
+    const [userCredit, setUserCredits] = useState(null);
 
     const program = new Program(idl, provider);
 
@@ -63,21 +64,17 @@ export const SwapWidget = () => {
         }
     }
 
-    const newLotteryID = new anchor.BN(1);
-    const newRoundID = new anchor.BN(2);
+    let lotteryPda;
 
-    const [roundPda, roundBump] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(ROUND_SEED), newRoundID.toArrayLike(Buffer, "le", 4)],
-        program.programId
-    );
-
-    const [lotteryPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(LOTTERY_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
-        program.programId
-    );
+    if (lastLotteryId > 0) {
+        [lotteryPda] = anchor.web3.PublicKey.findProgramAddressSync(
+            [Buffer.from(LOTTERY_SEED), lastLotteryId.toArrayLike(Buffer, "le", 4)],
+            program.programId
+        );
+    }
 
     const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(VAULT_SEED), newLotteryID.toArrayLike(Buffer, "le", 4)],
+        [Buffer.from(VAULT_SEED), lastLotteryId.toArrayLike(Buffer, "le", 4)],
         program.programId
     );
 
@@ -85,20 +82,6 @@ export const SwapWidget = () => {
         [Buffer.from(MINT_SEED)],
         program.programId
     );
-
-    let userDataPda;
-    if (wallet.publicKey) {
-        [userDataPda] =
-            anchor.web3.PublicKey.findProgramAddressSync(
-                [
-                    Buffer.from(USER_SEED),
-                    newLotteryID.toArrayLike(Buffer, "le", 4),
-                    wallet.publicKey.toBuffer(),
-                ],
-                program.programId
-            );
-    }
-
 
     const { publicKey: address } = useWallet();
     const {data: solBalance} = useGetBalance({ address });
@@ -156,7 +139,7 @@ export const SwapWidget = () => {
 
             if (action === "deposit") {
                 const tx = await program.methods
-                    .fDeposit(newLotteryID, bnValue)
+                    .fDeposit(lastLotteryId, bnValue)
                     .accounts({
                         lottery: lotteryPda,
                         vault: vaultPda,
@@ -175,7 +158,7 @@ export const SwapWidget = () => {
                 console.log("Deposit", tx)
             } else {
                 const tx = await program.methods
-                    .fWithdraw(newLotteryID, bnValue)
+                    .fWithdraw(lastLotteryId, bnValue)
                     .accounts({
                         lottery: lotteryPda,
                         vault: vaultPda,
@@ -200,21 +183,37 @@ export const SwapWidget = () => {
 
     }
 
+    let userDataPda;
+
     useEffect(() => {
         let fetchData = async () => {
             if (masterLotteryPda){
                 let lastLotteryId = await getLastLotteryId().catch(console.error);
-                setLastLotteryId(lastLotteryId)
+                setLastLotteryId(new anchor.BN(lastLotteryId))
+            }
+
+            if (wallet.publicKey && lastLotteryId > 0) {
+                [userDataPda] =
+                    anchor.web3.PublicKey.findProgramAddressSync(
+                        [
+                            Buffer.from(USER_SEED),
+                            lastLotteryId.toArrayLike(Buffer, "le", 4),
+                            wallet.publicKey.toBuffer(),
+                        ],
+                        program.programId
+                    );
+
+                let userDataVal = await program.account.userData.fetch(userDataPda);
+                setUserCredits(userDataVal.credits.toString());
             }
         }
 
         fetchData()
-    }, [masterLotteryPda]);
+    }, [lastLotteryId]);
 
 
     return (
         <div className="card bg-base-100 w-96 shadow-xl">
-            Last Lottery Id : {lastLotteryId}
             <div className="card-body gap-8">
                 <div role="tablist" className="tabs tabs-lifted tabs-lg">
                     <a role="tab" className={`tab ${action === "deposit" && 'tab-active'}`} onClick={setActionDeposit}>Deposit</a>
@@ -238,20 +237,23 @@ export const SwapWidget = () => {
                 <ClaimTickets
                     swBalance={swSolBalance}
                     program={program}
-                    roundPda={roundPda}
                     lotteryPda={lotteryPda}
+                    lotteryId={lastLotteryId}
 
                     userDataPda={userDataPda}
                 />
                 <CloseRound
                     canClose={canClose}
                     program={program}
-                    roundPda={roundPda}
                     lotteryPda={lotteryPda}
 
                     userDataPda={userDataPda}
                 />
             </div>
+
+            <p>Last Lottery Id : {lastLotteryId.toString()}</p>
+            <p>Current User Credits : {userCredit}</p>
+
         </div>
-    );
+);
 };

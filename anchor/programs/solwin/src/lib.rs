@@ -34,7 +34,7 @@ use state::*;
 // 8MdiVaEyHeYeU35v4ykmYeh4xN27u5dU7JpyLvB9DFMS
 // Ac5jYCkEM8rvM14Uyhfuv3k7Bzwc3iDqkud9tFytFVvq
 // Egep28u6NarDY8fPKXBKDsdGLCEZCNXJr1wViGucLBnW
-declare_id!("FLVEEeCy97QYdmu6iuYKFTcNhtrZdH7bAbUae48jkBdY");
+declare_id!("rYgtKE3B9TqMxfXzgRFbLkBmXQ7H9wMQuQkJT4FWcq1");
 
 #[program]
 pub mod solwin {

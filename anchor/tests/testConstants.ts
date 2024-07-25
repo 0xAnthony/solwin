@@ -4,13 +4,13 @@ import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 // SEEDS
 // increment these seeds and in constants.rs to force a new programId
 const seed = {
-  USER_SEED: "user42",
-  MASTER_LOTTERY_SEED: "master_lottery42",
-  LOTTERY_SEED: "lottery42",
-  VAULT_SEED: "vault42",
-  ROUND_SEED: "round42",
-  TICKET_SEED: "ticket42",
-  MINT_SEED: "mint42",
+  USER_SEED: "user69",
+  MASTER_LOTTERY_SEED: "master_lottery69",
+  LOTTERY_SEED: "lottery69",
+  VAULT_SEED: "vault69",
+  ROUND_SEED: "round69",
+  TICKET_SEED: "ticket69",
+  MINT_SEED: "mint69",
   METADATA_SEED: "metadata",
 };
 
