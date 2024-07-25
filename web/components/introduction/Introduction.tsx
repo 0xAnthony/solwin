@@ -1,15 +1,48 @@
 'use client'
 
-import {useMemo, useState} from "react";
-import {SWSOL_MINTER} from "@/constants";
+import {useEffect, useMemo, useState} from "react";
+import {MASTER_LOTTERY_SEED, SWSOL_MINTER, USER_SEED} from "@/constants";
 import {useGetTokenAccounts} from "@/components/account/account-data-access";
 import {useWallet} from "@solana/wallet-adapter-react";
+import * as anchor from "@coral-xyz/anchor";
+import {Program} from "@coral-xyz/anchor";
+import idl from "@/idl.json";
+import {useAnchorProvider} from "@/components/solana/solana-provider";
 
 export const Introduction = () => {
     const [currentStep, setCurrentStep] = useState(0);
+    const [balance, setBalance] = useState(0);
+    const [lastLotteryId, setLastLotteryId] = useState(new anchor.BN(0));
+    const [userCredits, setUserCredits] = useState("0");
 
-    const { publicKey: address } = useWallet();
-    const {data: tokenAccounts} = useGetTokenAccounts({ address });
+    const provider = useAnchorProvider();
+    const program = new Program(idl, provider);
+
+    const [masterLotteryPda, masterLotteryBump] =
+        anchor.web3.PublicKey.findProgramAddressSync(
+            [Buffer.from(MASTER_LOTTERY_SEED)],
+            program.programId
+        );
+
+    const getLastLotteryId = async () => {
+        const info = await program.provider.connection.getAccountInfo(
+            masterLotteryPda
+        );
+
+        if (!info) {
+            console.error("masterLotteryPda not found. IT SHOULD BE INITIALIZED!");
+            return;
+        }
+
+        let masterLotteryData = await program.account.fMasterLottery.fetch(
+            masterLotteryPda
+        );
+        const lastLotteryId = masterLotteryData.lastLotteryId;
+        return lastLotteryId;
+    };
+
+    const wallet = useWallet();
+    const {data: tokenAccounts} = useGetTokenAccounts({ address: wallet.publicKey });
     const {swSolBalance} = useMemo(() => {
         if (!tokenAccounts) {
             return {}
@@ -23,6 +56,7 @@ export const Introduction = () => {
 
         if(swSol) {
             res.swSolBalance = swSol.account.data.parsed.info.tokenAmount
+            setBalance(new anchor.BN(swSol.account.data.parsed.info.tokenAmount.amount))
             if (swSol.account.data.parsed.info.tokenAmount.uiAmount > 0 && currentStep === 0) {
                 setCurrentStep(1);
             }
@@ -30,9 +64,40 @@ export const Introduction = () => {
         return res
     }, [tokenAccounts]);
 
+    useEffect(() => {
+        let fetchData = async () => {
+            if (masterLotteryPda){
+                let lastLotteryId = await getLastLotteryId().catch(console.error);
+                setLastLotteryId(new anchor.BN(lastLotteryId))
+            }
+
+            if (wallet.publicKey && lastLotteryId > 0) {
+                const [userDataPda] =
+                    anchor.web3.PublicKey.findProgramAddressSync(
+                        [
+                            Buffer.from(USER_SEED),
+                            lastLotteryId.toArrayLike(Buffer, "le", 4),
+                            wallet.publicKey.toBuffer(),
+                        ],
+                        program.programId
+                    );
+
+                let userDataVal = await program.account.userData.fetch(userDataPda);
+                setUserCredits(userDataVal.credits);
+                console.log(balance < userDataVal.credits)
+                if (balance < userDataVal.credits) {
+                    setCurrentStep(2);
+                }
+            }
+        }
+
+        fetchData()
+    }, [lastLotteryId]);
+
+
     let steps = [
         {text: "Deposit funds", completed: swSolBalance && !!swSolBalance.uiAmount},
-        {text: "Claim tickets", completed: false},
+        {text: "Claim tickets", completed: balance && balance < userCredits},
         {text: "Get drafted as a winner", completed: false},
         {text: "Enjoy your earnings !", completed: false}
     ]

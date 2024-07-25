@@ -252,7 +252,8 @@ export const SwapWidget = () => {
             </div>
 
             <p>Last Lottery Id : {lastLotteryId.toString()}</p>
-            <p>Current User Credits : {userCredit}</p>
+            <p>Current User Credits : {userCredit / LAMPORTS_PER_SOL}</p>
+            <p>Ticket price : 0.1 Credit</p>
 
         </div>
 );
